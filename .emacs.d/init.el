@@ -5,6 +5,7 @@
 ;;; ----------------------------------------------------------------------
 ;;; 28 Dec 21 : gap in logging. Lots as changed in 8 years.
 ;;;           + melpa moved
+;;;           + added markdown-mode and grip-mode
 ;;;  6 Jun 13 : tweats jedi
 ;;; 13 Mai 13 : add pymacs
 ;;; 13 Mai 13 : add rope
@@ -216,7 +217,7 @@
 ;;;-------------------------------------------------------------------
 ;;; calendar
 ;;;-------------------------------------------------------------------
-; (setq european-calendar-style t)
+(setq european-calendar-style t)
 
 ;;;-------------------------------------------------------------------
 ;;; completion dans le minibuffer
@@ -334,6 +335,12 @@
 (setq cperl-hairy t)
 
 ;;;-------------------------------------------------------------------
+;;; markdown and grip
+;;;-------------------------------------------------------------------
+(autoload 'markdown-mode "markdown"  "Major mode to edit Markdown files." t)
+(add-hook 'markdown-mode-hook #'grip-mode)
+
+;;;-------------------------------------------------------------------
 ;;; Misc-Modes
 ;;;-------------------------------------------------------------------
 (autoload 'php-mode    "php-mode"    "PHP major mode." t)
@@ -390,6 +397,7 @@
 		("[Mm]akefile.*.am$" .  makefile-mode)
 		("GNUmakefile"  .       makefile-mode)
 		("\\.mk$"       .       makefile-mode)
+		("\\.md$"       .       markdown-mode)
 		("\\.kumac$"    .       kumac-mode)
 		("ChangeLog"    .       change-log-mode)
 		("\\.html$"     .       html-mode) 
@@ -477,7 +485,7 @@
  '(display-time-mode t)
  '(menu-bar-mode nil)
  '(package-selected-packages
-   '(pungi python-pytest python-mode pytest pylint pyimport pydoc-info pydoc pycoverage json-mode jedi indium google-contacts go-imports go-guru github-stars github-search github-review git-command flymake-yaml flymake-rust flymake-python-pyflakes flymake-php flymake-lua flymake-less flymake-json flymake-gjshint flymake-eslint flymake-cursor flymake-css flymake-cppcheck ein-mumamo dired-rsync dired-git dashboard-project-status company-web company-shell company-math company-lua company-jedi company-go company-flow company-ctags company-bibtex company-auctex company-ansible browse-at-remote bind-key apache-mode ansible-vault ansible))
+   '(markdown-changelog markdown-mode grip-mode pungi python-pytest python-mode pytest pylint pyimport pydoc-info pydoc pycoverage json-mode jedi indium google-contacts go-imports go-guru github-stars github-search github-review git-command flymake-yaml flymake-rust flymake-python-pyflakes flymake-php flymake-lua flymake-less flymake-json flymake-gjshint flymake-eslint flymake-cursor flymake-css flymake-cppcheck ein-mumamo dired-rsync dired-git dashboard-project-status company-web company-shell company-math company-lua company-jedi company-go company-flow company-ctags company-bibtex company-auctex company-ansible browse-at-remote bind-key apache-mode ansible-vault ansible))
  '(show-paren-mode t)
  '(size-indication-mode t)
  '(text-mode-hook
