@@ -3,7 +3,8 @@
 ;;; .emacs                                             
 ;;;
 ;;; ----------------------------------------------------------------------
-;;; 28 Dec 21 : gap in logging. Lots as changed in 8 years.
+;;; 22 Fev 21 : move from flymake to flycheck
+;;; 28 Dec 20 : gap in logging. Lots as changed in 8 years.
 ;;;           + melpa moved
 ;;;           + added markdown-mode and grip-mode
 ;;;  6 Jun 13 : tweats jedi
@@ -292,28 +293,34 @@
 ;;;-------------------------------------------------------------------
 ;;; flymake
 ;;;-------------------------------------------------------------------
-(require 'flymake-python-pyflakes)
-(add-hook 'python-mode-hook 'flymake-python-pyflakes-load)
-(require 'flymake-cursor)
-(global-set-key [f13] 'python-check)
+;(require 'flymake-python-pyflakes)
+;(add-hook 'python-mode-hook 'flymake-python-pyflakes-load)
+;; (require 'flymake-cursor)
+;(global-set-key [f13] 'python-check)
 
-(require 'flymake-css)
-(add-hook 'css-mode-hook 'flymake-css-load)
+;(require 'flymake-css)
+;(add-hook 'css-mode-hook 'flymake-css-load)
 
-(require 'flymake-gjshint)
-(add-hook 'js-mode-hook 'flymake-gjshint:load)
+;(require 'flymake-gjshint)
+;(add-hook 'js-mode-hook 'flymake-gjshint:load)
 
 
-(require 'flymake-json)
-(add-hook 'json-mode 'flymake-json-load)
+;(require 'flymake-json)
+;(add-hook 'json-mode 'flymake-json-load)
 ;; or, if you use `js-mode' for json:
 ;;   (add-hook 'js-mode-hook 'flymake-json-maybe-load)
 
-(require 'flymake-php)
-(add-hook 'php-mode-hook 'flymake-php-load)
+;(require 'flymake-php)
+;(add-hook 'php-mode-hook 'flymake-php-load)
 
-(require 'flymake-yaml) ;; Not necessary if using ELPA package
-(add-hook 'yaml-mode-hook 'flymake-yaml-load)
+;(require 'flymake-yaml) ;; Not necessary if using ELPA package
+;(add-hook 'yaml-mode-hook 'flymake-yaml-load)
+
+
+;;;-------------------------------------------------------------------
+;;; flycheck
+;;;-------------------------------------------------------------------
+(add-hook 'after-init-hook #'global-flycheck-mode)
 
 
 ;;;-------------------------------------------------------------------
@@ -481,18 +488,21 @@
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
  '(custom-safe-themes
-   '("3bd9497fb8f39c28ab58a9e957152ba2dc41223c23c5520ef10fc7bd6b222384" "24cb1b9c182198f52df7cebf378ee9ecca93a2daeb9a90049a2f1f556119c742" "9372085daf286af2f75bf00f03f4403d213a843e649c5195cf325fe64a7bee82" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "77bd459212c0176bdf63c1904c4ba20fce015f730f0343776a1a14432de80990" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "78cfbd96775588c06c4fff22573aaa5fa762ca2b8eda43cb964b7739194ed3c1" "3c708b84612872e720796ea1b069cf3c8b3e909a2e1da04131f40e307605b7f9" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "e16a771a13a202ee6e276d06098bc77f008b73bbac4d526f160faa2d76c1dd0e" default))
+   (quote
+    ("3bd9497fb8f39c28ab58a9e957152ba2dc41223c23c5520ef10fc7bd6b222384" "24cb1b9c182198f52df7cebf378ee9ecca93a2daeb9a90049a2f1f556119c742" "9372085daf286af2f75bf00f03f4403d213a843e649c5195cf325fe64a7bee82" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "77bd459212c0176bdf63c1904c4ba20fce015f730f0343776a1a14432de80990" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "78cfbd96775588c06c4fff22573aaa5fa762ca2b8eda43cb964b7739194ed3c1" "3c708b84612872e720796ea1b069cf3c8b3e909a2e1da04131f40e307605b7f9" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "e16a771a13a202ee6e276d06098bc77f008b73bbac4d526f160faa2d76c1dd0e" default)))
  '(display-time-mode t)
  '(menu-bar-mode nil)
  '(package-selected-packages
-   '(markdown-changelog markdown-mode grip-mode pungi python-pytest python-mode pytest pylint pyimport pydoc-info pydoc pycoverage json-mode jedi indium google-contacts go-imports go-guru github-stars github-search github-review git-command flymake-yaml flymake-rust flymake-python-pyflakes flymake-php flymake-lua flymake-less flymake-json flymake-gjshint flymake-eslint flymake-cursor flymake-css flymake-cppcheck ein-mumamo dired-rsync dired-git dashboard-project-status company-web company-shell company-math company-lua company-jedi company-go company-flow company-ctags company-bibtex company-auctex company-ansible browse-at-remote bind-key apache-mode ansible-vault ansible))
+   (quote
+    (flycheck flycheck-checkbashisms flycheck-clang-analyzer flycheck-css-colorguard flycheck-cstyle flycheck-cython flycheck-golangci-lint flycheck-indent flycheck-indicator flycheck-ini-pyinilint flycheck-julia flycheck-kotlin flycheck-mypy flycheck-pycheckers flycheck-pyre flycheck-rust flycheck-pyflakes js2-refactor js2-mode markdown-changelog markdown-mode grip-mode pungi python-pytest python-mode pytest pylint pyimport pydoc-info pydoc pycoverage json-mode jedi indium google-contacts go-imports go-guru github-stars github-search github-review git-command flymake-yaml flymake-rust flymake-python-pyflakes flymake-php flymake-lua flymake-less flymake-json flymake-gjshint flymake-eslint flymake-cursor flymake-css flymake-cppcheck ein-mumamo dired-rsync dired-git dashboard-project-status company-web company-shell company-math company-lua company-jedi company-go company-flow company-ctags company-bibtex company-auctex company-ansible browse-at-remote bind-key apache-mode ansible-vault ansible)))
  '(show-paren-mode t)
  '(size-indication-mode t)
  '(text-mode-hook
-   '(turn-on-auto-fill
+   (quote
+    (turn-on-auto-fill
      (lambda nil
        (setq require-final-newline t)
-       (turn-on-auto-fill))))
+       (turn-on-auto-fill)))))
  '(tool-bar-mode nil)
  '(tooltip-mode nil))
 (custom-set-faces
