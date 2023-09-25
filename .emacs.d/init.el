@@ -1,5 +1,7 @@
 ;;; paub-init --- initialisation for .emacs -*- emacs-lisp -*-
 ;;; Commentary:
+;;;  25 Sep 23 :  switch to emacs29
+;;;  24 Sep 23 :  add support for typescript
 ;;;  07 Mar 23 :  installed lsp and ruff: best python experience so far
 ;;;   1 Fev 23 :  debugged javascript mode
 ;;;  17 Jan 22 :  debugged javascript mode
@@ -149,197 +151,23 @@
 (add-to-list 'load-path "~/share/emacs")
 
 ;;;-------------------------------------------------------------------
-;;; (aqua)macs
-;;;-------------------------------------------------------------------
-;; key bindings
-(when (eq system-type 'darwin) ;; mac specific settings
-  ;; (setq mac-option-modifier 'hyper) ;; option = alt on macos keybaord
-  ;; (setq mac-option-modifier 'super) ;; option = alt on macos keybaord
-  ;;; must be nil if i want to get {} with alt-( on FR keyboard
-  (setq mac-option-modifier nil) ;; option = alt on macos keybaord
-  ;; let command and control in normal place
-  ;; i switch control/caps globally on mac kbd
-  (setq mac-command-modifier 'command) ;; command = apple
-  (setq mac-control-modifier 'control) ;; control (i swap it with caps lock)
-  (global-set-key [kp-delete] 'delete-char) ;; sets fn-delete to be right-delete
-  )
- 
-;;;-------------------------------------------------------------------
-;; Frame and window management:
-;;;-------------------------------------------------------------------
-
-(when (fboundp 'tool-bar-mode)
-              (tool-bar-mode -1)) ; turn off toolbar
-(menu-bar-mode -1)  ; no scrollbars
-(blink-cursor-mode -1)
-(setq inhibit-startup-screen t)
-(line-number-mode t)
-(column-number-mode t)
-(size-indication-mode t)
-(if (fboundp 'fringe-mode)
-    (fringe-mode 4))
-
-;;;-------------------------------------------------------------------
-;;; align
-;;;-------------------------------------------------------------------
-; (require 'align)
-
-;;;-------------------------------------------------------------------
-;;; bind des touches (must be before X-Window)
-;;;-------------------------------------------------------------------
-(global-set-key "\C-h" 'delete-backward-char)
-(global-set-key "\C-xh" 'help-command)
-
-(setq gold-map (make-keymap))
-(define-key gold-map " " 'set-mark-command)
-(define-key gold-map "c" 'compile )
-(define-key gold-map "g" 'goto-line )
-(define-key gold-map "%" 'query-replace-regexp )
-(define-key gold-map "z" 'suspend-emacs )
-(define-key gold-map "i" 'c-indent-defun)
-(define-key gold-map "d" 'gdb)
-(define-key gold-map "t" 'tags-query-replace)
-(define-key gold-map "!" 'next-error)
-
-(global-set-key [f1] gold-map)
-(global-set-key [f2] 'align)
-(global-set-key [f3] 'undo)
-(global-set-key [f4] 'next-error)
-(global-set-key [f15] 'next-error)
-
-;;;-------------------------------------------------------------------
-;;; time
-;;;-------------------------------------------------------------------
-(display-time)
-(setq display-time-24hr-format t)
-
-(setq-default indent-tabs-mode nil)  ; use only spaces and no tabs
-; (setq tab-width 4)
-
-;;;-------------------------------------------------------------------
-;;; calendar
-;;;-------------------------------------------------------------------
-(setq european-calendar-style t)
-
-;;;-------------------------------------------------------------------
-;;; completion dans le minibuffer
-;;;-------------------------------------------------------------------
-(require 'icomplete)
-
-;;;-------------------------------------------------------------------
-;;; packages archive
-;;;-------------------------------------------------------------------
-
-(require 'package)
-(when (< emacs-major-version 24)
-  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
-(package-initialize)
-
-;;;-------------------------------------------------------------------
-;;; yasnippet
-;;;-------------------------------------------------------------------
-(add-to-list 'load-path "~/.emacs.d/yasnippet")
-(require 'yasnippet)
-(yas-global-mode 1)
-
-;;;-------------------------------------------------------------------
-;;; C-Mode
-;;;-------------------------------------------------------------------
-(load "cc-mode")
-(c-initialize-cc-mode)
-
-;;;-------------------------------------------------------------------
-;;; C++-Mode
-;;;-------------------------------------------------------------------
-(defconst pa-cc-style 
-  '((indent-tabs-mode       . nil)
-    (c-basic-offset         . 4)
-    (c-offsets-alist        . ((namespace-open     . --)
-			       (innamespace        . 0)
-			       (comment-intro      . 0)
-			       (substatement-open  . 0)
-			       (inline-open        . 0)
-			       ))
-    (c-hanging-braces-alist . ((brace-list-open)
-			       (brace-list-intro)
-			       (brace-list-close)
-			       (brace-entry-open)
-			       ))))
-
-(defun pa-cc-mode-common-hook ()
-  (c-set-style "bsd")
-  (c-toggle-auto-hungry-state 1)
-  (c-add-style "PA style" pa-cc-style t)
-)
-
-(add-hook 'c-mode-common-hook 'pa-cc-mode-common-hook)
-
-;;;-------------------------------------------------------------------
-;;; python  mode
-;;; 2 solutions for autocomplete jedi et rope
-;;; rope is more oriented toward refactorisation, i will use jedi for
-;;; now
-;;;-------------------------------------------------------------------
-;(setq py-load-pymacs-p nil)
-;(add-to-list 'load-path "~/.emacs.d/vendor/pymacs")
-;(require 'pymacs)
-;(pymacs-load "ropemacs" "rope-")
-;(setq ropemacs-enable-autoimport t)
-
-(setq jedi:setup-keys t)
-(autoload 'jedi:setup "jedi" nil t)
-(add-hook 'pyrhon-mode-hook 'jedi:setup)
-
-;;;-------------------------------------------------------------------
-;;; flymake
-;;;-------------------------------------------------------------------
-;(require 'flymake-python-pyflakes)
-;(add-hook 'python-mode-hook 'flymake-python-pyflakes-load)
-;; (require 'flymake-cursor)
-;(global-set-key [f13] 'python-check)
-
-;(require 'flymake-css)
-;(add-hook 'css-mode-hook 'flymake-css-load)
-
-;(require 'flymake-gjshint)
-;(add-hook 'js-mode-hook 'flymake-gjshint:load)
-
-
-;(require 'flymake-json)
-;(add-hook 'json-mode 'flymake-json-load)
-;; or, if you use `js-mode' for json:
-;;   (add-hook 'js-mode-hook 'flymake-json-maybe-load)
-
-;(require 'flymake-php)
-;(add-hook 'php-mode-hook 'flymake-php-load)
-
-;(require 'flymake-yaml) ;; Not necessary if using ELPA package
-;(add-hook 'yaml-mode-hook 'flymake-yaml-load)
-
-
-;;;-------------------------------------------------------------------
 ;;; autocomplete for python & others
 ;;;-------------------------------------------------------------------
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 (ac-config-default)
-;;; set the trigger key so that it can work together with yasnippet on tab key,
-;;; if the word exists in yasnippet, pressing tab will cause yasnippet to
-;;; activate, otherwise, auto-complete will
-(ac-set-trigger-key "TAB")
-(ac-set-trigger-key "<tab>")
 
 ;;;-------------------------------------------------------------------
 ;;; perl mode
 ;;;-------------------------------------------------------------------
 (autoload 'cperl-mode  "cperl-mode"  "Cperl major mode." t)
-(setq cperl-hairy t)
+; (setq cperl-hairy t)
 
 ;;;-------------------------------------------------------------------
 ;;; markdown and grip
 ;;;-------------------------------------------------------------------
 (autoload 'markdown-mode "markdown"  "Major mode to edit Markdown files." t)
+(autoload 'grip-mode "markdown"  "Minor mode to edit Markdown files." t)
 (add-hook 'markdown-mode-hook #'grip-mode)
 
 ;;;-------------------------------------------------------------------
@@ -353,14 +181,14 @@
 (autoload 'erlang-mode "erlang"      "Major mode to edit Erlang files." t)
 (autoload 'java-mode   "cc-mode"     "Java Editing Mode." t)
 (autoload 'php-mode    "php-mode"    "PHP major mode." t)
-(autoload 'rust-mode   "rust-mode"   nil t)
+(autoload 'rust-mode   "rust-mode"   "Rust major mode" t)
 (autoload 'sgml-mode   "psgml"       "Major mode to edit SGML files." t)
 (autoload 'xml-mode    "psgml"       "Major mode to edit XML files." t)
 
 ;;;-------------------------------------------------------------------
 ;;; Auto-Mode-Alist
 ;;;-------------------------------------------------------------------
-(setq-default auto-mode-alist 
+(setq-default auto-mode-alist
               '(
 		("\\.inc$"      .       php-mode)
 		("\\.php$"      .       php-mode)
@@ -403,10 +231,10 @@
 		("\\.md$"       .       markdown-mode)
 		("\\.kumac$"    .       kumac-mode)
 		("ChangeLog"    .       change-log-mode)
-		("\\.html$"     .       html-mode) 
-		("\\.html.cpp$" .       html-mode) 
-		("\\.cpp$"      .       html-mode) 
-		("\\.xml$"      .       xml-mode) 
+		("\\.html$"     .       html-mode)
+		("\\.html.cpp$" .       html-mode)
+		("\\.cpp$"      .       html-mode)
+		("\\.xml$"      .       xml-mode)
 		("\\.xsl$"      .       xml-mode) 
 		("\\.xsd$"      .       xml-mode)
 		("\\.dcl$"      .       xml-mode)
@@ -430,8 +258,9 @@
 		("\\.pl$"       .       cperl-mode) 
 		("\\.pm$"       .       cperl-mode) 
 		("\\.java$"     .       java-mode) 
-		; ("\\.js$"       .       js2-mode) 
+		; ("\\.js$"       .       js2-mode) ; 
 		("\\.tcl$"      .       tcl-mode) 
+		("\\.ts$"       .       typescript-mode) 
 		("\\.sql$"      .       sql-mode) 
 		("\\.rb$"       .       ruby-mode) 
 		("\\.txt$"      .       text-mode) 
@@ -439,63 +268,8 @@
 		("\\.hrl$"      .       erlang-mode) 
 		("\\.erl$"      .       erlang-mode) 
 		("\\.rs$"       .       rust-mode) 
-               ))
-
-;;; ----------------------------------------------------------------------
-;;; MODE HOOK
-;;; ----------------------------------------------------------------------
-(setq text-mode-hook 
-      '(lambda ()
-	 (setq require-final-newline t)
-	 ; not used any more utf8 replace all :)
-	 ; (iso-latin-1-mode 1)
-	 (turn-on-auto-fill))
-; ----------------------------------------------------------------------
-      makefile-mode-hook 
-      '(lambda ()
-	 (setq tab-stop-list nil)
-	 (local-set-key "$" 'self-insert-command)
-	 (local-set-key "\C-i" 'indent-for-tab-command)
-	 )
-; ----------------------------------------------------------------------
-      rust-mode-hook
-      '(lambda ()
-         (setq indent-tabs-mode nil))
-)
-      
-;;; ----------------------------------------------------------------------
-;;; tide
-;;; ----------------------------------------------------------------------
-; (defun setup-tide-mode ()
-;   (interactive)
-;   (tide-setup)
-;   (flycheck-mode +1)
-;   (setq flycheck-check-syntax-automatically '(save mode-enabled))
-;   (eldoc-mode +1)
-;   (tide-hl-identifier-mode +1)
-;   ;; company is an optional dependency. You have to
-;   ;; install it separately via package-install
-;   ;; `M-x package-install [ret] company`
-;   (company-mode +1))
-; 
-; ;; aligns annotation to the right hand side
-; (setq company-tooltip-align-annotations t)
-; 
-; ;; formats the buffer before saving
-; (add-hook 'before-save-hook 'tide-format-before-save)
-; (add-hook 'typescript-mode-hook #'setup-tide-mode)
-; (add-hook 'js2-mode-hook #'setup-tide-mode)
-; 
-; (require 'web-mode)
-; (add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
-; (add-hook 'web-mode-hook
-;           (lambda ()
-;             (when (string-equal "jsx" (file-name-extension buffer-file-name))
-;               (setup-tide-mode))))
-
-;; configure jsx-tide checker to run after your default jsx checker
-; (flycheck-add-mode 'javascript-eslint 'web-mode)
-; (flycheck-add-next-checker 'javascript-tide 'jsx-tide 'append)
+                )
+              )
 
 ;;; ----------------------------------------------------------------------
 ;;; javascrip: js2
@@ -514,50 +288,59 @@
 
 (add-to-list 'auto-mode-alist '("\\.js\\'"    . js2-mode))
 
-(flycheck-mode +1)
-
 ;;;-------------------------------------------------------------------
 ;;; flycheck
 ;;;-------------------------------------------------------------------
-(defvar my-excluded-directory-regexps
-  '("datas/"))
+;(defvar my-excluded-directory-regexps
+;  '("datas/"))
 
-(defun my-flycheck-may-check-automatically (&rest _conditions)
-  (or (null buffer-file-name)
-      (let ((bufname (file-truename buffer-file-name)))
-        (not (seq-some (lambda (re) (string-match-p re bufname))
-                       my-excluded-directory-regexps)))))
+;(defun my-flycheck-may-check-automatically (&rest _conditions)
+;  (or (null buffer-file-name)
+;      (let ((bufname (file-truename buffer-file-name)))
+;        (not (seq-some (lambda (re) (string-match-p re bufname))
+;                       my-excluded-directory-regexps)))))
 
-(add-hook 'after-init-hook #'global-flycheck-mode)
+;(add-hook 'after-init-hook #'global-flycheck-mode)
 
-(advice-add 'flycheck-may-check-automatically
-            :after-while #'my-flycheck-may-check-automatically)
+;(advice-add 'flycheck-may-check-automatically
+;            :after-while #'my-flycheck-may-check-automatically)
+
+;(flycheck-mode +1)
+
 
 ;;; ----------------------------------------------------------------------
-;;; lsp
+;;; tree sitter
+;;; ----------------------------------------------------------------------
+(use-package tree-sitter
+  :ensure t
+  :config
+  ;; activate tree-sitter on any buffer containing code for which it has a parser available
+  (global-tree-sitter-mode)
+  ;; you can easily see the difference tree-sitter-hl-mode makes for python, ts or tsx
+  ;; by switching on and off
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+(use-package tree-sitter-langs
+  :ensure t
+  :after tree-sitter)
+
+;;; ----------------------------------------------------------------------
+;;; lsp or eglot? 
 ;;; ----------------------------------------------------------------------
 (require 'lsp-mode)
-(add-hook 'python-mode-hook #'lsp)
+(require 'lsp-ui)
+(require 'lsp-treemacs)
+(lsp-treemacs-sync-mode 1)
 
-;;; ----------------------------------------------------------------------
-;;; listbuf
-;;; ----------------------------------------------------------------------
-;(autoload 'listbuf "listbuf" nil t)
-;(substitute-key-definition 'list-buffers 'listbuf ctl-x-map)
-;(defalias 'list-buffers 'listbuf)
-
-;;; ----------------------------------------------------------------------
-;;; helm
-;;; ----------------------------------------------------------------------
-;(add-to-list 'load-path "~/.emacs.d/elpa/helm-20130528.922/")
-;(require 'helm-config)
+;(use-package eglot
+;  :ensure t)
 
 ;;; ----------------------------------------------------------------------
 ;;; custom
 ;;; ----------------------------------------------------------------------
 
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
+ ;; custom-set-variables was added by Custo.m
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
@@ -567,7 +350,7 @@
  '(display-time-mode t)
  '(menu-bar-mode nil)
  '(package-selected-packages
-   '(frontside-javascript web-mode web company tide ac-js2 flow-js2-mode flow-minor-mode js2-highlight-vars rust-mode flycheck-checkbashisms flycheck-clang-analyzer flycheck-css-colorguard flycheck-cstyle flycheck-cython flycheck-golangci-lint flycheck-indent flycheck-indicator flycheck-ini-pyinilint flycheck-julia flycheck-kotlin flycheck-mypy flycheck-pyre flycheck-rust flycheck-pyflakes markdown-changelog markdown-mode grip-mode pungi python-pytest python-mode pytest pylint pyimport pydoc-info pydoc pycoverage json-mode jedi indium google-contacts go-imports go-guru github-stars github-search github-review git-command flymake-eslint flymake-cppcheck ein-mumamo dired-rsync dired-git dashboard-project-status company-web company-shell company-math company-lua company-jedi company-go company-flow company-ctags company-bibtex company-auctex company-ansible browse-at-remote bind-key apache-mode ansible-vault ansible))
+   '(tree-sitter-langs tss typescript-mode cython-mode frontside-javascript web-mode web company tide ac-js2 flow-js2-mode flow-minor-mode js2-highlight-vars rust-mode flycheck-checkbashisms flycheck-clang-analyzer flycheck-css-colorguard flycheck-cstyle flycheck-cython flycheck-golangci-lint flycheck-indent flycheck-indicator flycheck-ini-pyinilint flycheck-julia flycheck-kotlin flycheck-mypy flycheck-pyre flycheck-rust flycheck-pyflakes markdown-changelog markdown-mode grip-mode pungi python-pytest python-mode pytest pylint pyimport pydoc-info pydoc pycoverage json-mode jedi indium google-contacts go-imports go-guru github-stars github-search github-review git-command flymake-eslint flymake-cppcheck ein-mumamo dired-rsync dired-git dashboard-project-status company-web company-shell company-math company-lua company-jedi company-go company-flow company-ctags company-bibtex company-auctex company-ansible browse-at-remote bind-key apache-mode ansible-vault ansible))
  '(safe-local-variable-values '((flycheck-checker . javascript-standar)))
  '(show-paren-mode t)
  '(size-indication-mode t)
