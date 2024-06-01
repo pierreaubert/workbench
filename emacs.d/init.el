@@ -204,13 +204,8 @@
 ;;Useful for configuring built-in emacs features.
 (use-package emacs :ensure nil :config (setq ring-bell-function #'ignore))
 
-;;;-------------------------------------------------------------------
-;;; Lisp code not managed by elpaca
-;;;-------------------------------------------------------------------
-(add-to-list 'load-path "~/src/workbench/emacs.d/share")
-
 ;;; -------------------------------------------------------------------
-;;  global settings
+;;;  global settings
 ;;; -------------------------------------------------------------------
 (menu-bar-mode 0)
 (tool-bar-mode 0)
@@ -218,6 +213,7 @@
 (setq ring-bell-function 'ignore)
 (defalias 'yes-or-no-p 'y-or-n-p)
 (setq use-dialog-box nil)
+(setq native-comp-async-report-warnings-errors nil)
 
 ;;; -------------------------------------------------------------------
 ;;  global keys
@@ -238,14 +234,45 @@
   (setq mac-option-modifier 'alt)
   (setq mac-command-modifier 'meta)
 
-    ;; sets fn-delete to be right-delete
+  ;; sets fn-delete to be right-delete
+  ;;(setq mac-option-modifier 'meta
+  ;;	mac-command-modifier 'super
+  ;;	mac-right-option-modifier 'none)
+
   (global-set-key [kp-delete] 'delete-char)
+  (global-set-key (kbd "s-c") 'kill-ring-save)
+  (global-set-key (kbd "s-v") 'yank)
+  (global-set-key (kbd "s-x") 'kill-region)
+  (global-set-key (kbd "s-a") 'mark-whole-buffer)
+  (global-set-key (kbd "s-z") 'undo)
+  (global-set-key (kbd "s-f") 'isearch-forward)
+  (global-set-key (kbd "s-g") 'isearch-repeat-forward)
+  (global-set-key (kbd "s-o") 'find-file)
+  (global-set-key (kbd "s-o") 'mac-open-file)
+  (global-set-key (kbd "s-n") 'find-file)
+  (global-set-key (kbd "s-s") 'save-buffer)
+  (global-set-key (kbd "s-S") 'mac-save-file-as)
+  (global-set-key (kbd "s-p") 'mac-preview) ; requires mac-preview
+  (global-set-key (kbd "s-w") 'kill-buffer)
+  (global-set-key (kbd "s-m") 'iconify-frame)
+  (global-set-key (kbd "s-q") 'save-buffers-kill-emacs)
+  (global-set-key (kbd "s-.") 'keyboard-quit)
+  (global-set-key (kbd "s-l") 'goto-line)
+  (global-set-key (kbd "s-k") 'kill-buffer)
+  (global-set-key (kbd "s-<up>")    'beginning-of-buffer)
+  (global-set-key (kbd "s-<down>")  'end-of-buffer)
+  (global-set-key (kbd "s-<left>")  'beginning-of-line)
+  (global-set-key (kbd "s-<right>") 'end-of-line)
+  (global-set-key [(meta down)]     'forward-paragraph)
+  (global-set-key [(meta up)]       'backward-paragraph)
   (menu-bar-mode 1)
 
   ;; Enable mac option to create accented characters
   (setq ns-alternate-modifier 'none)
   (setq frame-resize-pixelwise t)
-  (setq ns-left-alternate-modifier 'none))
+  (setq ns-left-alternate-modifier 'none)
+
+  )
 
 
 ;;;-------------------------------------------------------------------
@@ -511,7 +538,7 @@
   :bind (:map sql-mode-map ("C-c C-f" . sqlformat)))
 
 ;;;-------------------------------------------------------------------
-;;; flycheck
+;;; flycheck or flymake
 ;;;-------------------------------------------------------------------
 ;(defvar my-excluded-directory-regexps
 ;  '("datas/"))
@@ -529,6 +556,39 @@
 
 ;(flycheck-mode +1)
 
+(use-package sideline-flymake
+  :ensure t
+  :hook (flymake-mode . sideline-mode)
+  :custom
+  (flymake-error-bitmap '(my-rounded-fringe-indicator compilation-error))
+  (flymake-note-bitmap '(my-rounded-fringe-indicator compilation-info))
+  (flymake-warning-bitmap '(my-rounded-fringe-indicator compilation-warning))
+  :init
+  (setq sideline-flymake-display-errors-whole-line
+	'point
+	sideline-backends-right '(sideline-flymake)))
+
+(when (fboundp 'define-fringe-bitmap)
+  (define-fringe-bitmap 'my-rounded-fringe-indicator
+    (vector #b00000000
+            #b00000000
+	    #b00000000
+	    #b00000000
+	    #b00000000
+	    #b00000000
+
+	    #b00000000
+            #b00011100
+	    #b00111110
+	    #b00111110
+	    #b00111110
+	    #b00011100
+
+	    #b00000000
+            #b00000000
+	    #b00000000
+	    #b00000000
+	    #b00000000)))
 
 ;;; ----------------------------------------------------------------------
 ;;; tree sitter
@@ -536,10 +596,7 @@
 (use-package tree-sitter
   :ensure t
   :config
-  ;; activate tree-sitter on any buffer containing code for which it has a parser available
   (global-tree-sitter-mode)
-  ;; you can easily see the difference tree-sitter-hl-mode makes for python, ts or tsx
-  ;; by switching on and off
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
 (use-package tree-sitter-langs
@@ -614,6 +671,7 @@
 ;;; ----------------------------------------------------------------------
 ;;; git
 ;;; ----------------------------------------------------------------------
+(use-package magit :ensure t)
 (use-package git-timemachine :ensure t)
 (use-package blamer
   :ensure t
@@ -733,32 +791,14 @@
 ;; Set the title
 (setq dashboard-banner-logo-title "Bonjour Pierre")
 ;; Set the banner
-(setq dashboard-startup-banner "~/src/workbench/.emacs.d/spin.png")
-;; Value can be:
-;;  - 'official which displays the official emacs logo.
-;;  - 'logo which displays an alternative emacs logo.
-;;  - an integer which displays one of the text banners
-;;    (see dashboard-banners-directory files).
-;;  - a string that specifies a path for a custom banner
-;;    currently supported types are gif/image/text/xbm.
-;;  - a cons of 2 strings which specifies the path of an image to use
-;;    and other path of a text file to use if image isn't supported.
-;;    ("path/to/image/file/image.png" . "path/to/text/file/text.txt").
-;;  - a list that can display an random banner,
-;;    supported values are: string (filepath), 'official, 'logo and integers.
-
+(setq dashboard-startup-banner "~/src/workbench/emacs.d/polkadot.txt")
+(setq dashboard-center-content t)
 (setq dashboard-vertically-center-content t)
-
-(setq dashboard-items '((recents   . 5)
-                        (bookmarks . 5)
-                        (projects  . 5)
-                        (agenda    . 5)
-                        (registers . 5)))
-(setq dashboard-icon-type 'all-the-icons)  ; use `all-the-icons' package
+(setq dashboard-items '((recents   . 10)
+			(projects  . 10)))
+(setq dashboard-icon-type 'all-the-icons)
 (setq dashboard-set-heading-icons t)
 (setq dashboard-set-file-icons t)
-(setq dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name)
-
 
 ;;; ----------------------------------------------------------------------
 ;;; compile
@@ -809,6 +849,11 @@
 	"https://www.audiosciencereview.com/forum/index.php?reviews/index.rss"
 	"https://www.audiosciencereview.com/forum/index.php?forums/speaker-reviews-measurements-and-discussion.54/index.rss"
 	))
+
+;;;-------------------------------------------------------------------
+;;; Lisp code not managed by elpaca
+;;;-------------------------------------------------------------------
+(add-to-list 'load-path "~/src/workbench/emacs.d/share")
 
 ;;; ----------------------------------------------------------------------
 ;;; custom
