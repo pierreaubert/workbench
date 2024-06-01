@@ -1,6 +1,7 @@
 ;;; paub-init --- initialisation for .emacs -*- emacs-lisp -*-
 ;;; Commentary:
 ;;;  01 Jun 24 :  add some custom conf for macOS
+;;;            +  switch to elpaca to install packages
 ;;;  25 Sep 23 :  switch to emacs29
 ;;;  24 Sep 23 :  add support for typescript
 ;;;  07 Mar 23 :  installed lsp and ruff: best python experience so far
@@ -140,12 +141,10 @@
 ;;   Leave these here for debugging this file!
 ;;;  -------------------------------------------------------------------
 
-;(setq debug-on-error t)
-;(add-hook 'after-init-hook
-;	  '(lambda () (setq debug-on-error t)))
-;(debug-on-entry 'command-line-1)
-;(setq message-log-max 1000)
-;; (load-theme 'misterioso)
+; (setq debug-on-error t)
+; (add-hook 'after-init-hook '(lambda () (setq debug-on-error t)))
+; (debug-on-entry 'command-line-1)
+; (setq message-log-max 1000)
 
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 160 1000 1000))
@@ -205,7 +204,7 @@
 (use-package emacs :ensure nil :config (setq ring-bell-function #'ignore))
 
 ;;;-------------------------------------------------------------------
-;;; Lisp code :
+;;; Lisp code not managed by elpaca
 ;;;-------------------------------------------------------------------
 (add-to-list 'load-path "~/src/workbench/.emacs.d/share")
 
@@ -229,8 +228,6 @@
 
 (global-set-key (kbd "<f7>") (lambda() (interactive)(load-theme "tango-light")))
 (global-set-key (kbd "<f8>") (lambda() (interactive)(load-theme "tango-dark")))
-(global-set-key (kbd "<f9>") (lambda() (interactive)(load-theme "doom-theme")))
-
 
 ;;;  -------------------------------------------------------------------
 ;;   MacOS
@@ -268,59 +265,32 @@
   (mapc #'disable-theme custom-enabled-themes))
 
 ;; use icons
-(use-package all-the-icons :ensure t)
+(use-package all-the-icons
+  :if (display-graphic-p))
+
 (use-package all-the-icons-dired
-  :ensure t
+  :if (display-graphic-p)
   :hook (dired-mode . all-the-icons-dired-mode))
+
+;; more icons
+;;(use-package nerd-icons
+  ;; :custom
+  ;; The Nerd Font you want to use in GUI
+  ;; "Symbols Nerd Font Mono" is the default and is recommended
+  ;; but you can use any other Nerd Font if you want
+  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+;;  )
+
+;;(use-package nerd-icons-dired
+;;  :hook
+;;  (dired-mode . nerd-icons-dired-mode))
 
 ;; emoji
 (use-package emojify
   :ensure t
   :hook (elpaca-after-init . global-emojify-mode))
 
-;; theme neotree
-(defun text-scale-twice ()
-  (interactive)
-  (progn(text-scale-adjust 0)(text-scale-decrease 2)))
-
-(use-package neotree
-  :ensure t
-  :bind([f9] . neotree-toggle)
-  :hook (neo-after-create . (lambda (_)(call-interactively 'text-scale-twice)))
-  :config
-  (setq neo-autorefresh nil)
-  (setq neo-smart-open t)
-  (with-eval-after-load 'neotree
-    (define-key neotree-mode-map (kbd "h") 'neotree-hidden-file-toggle)))
-
-;; theme doom
-(use-package doom-themes
-  :ensure t
-  :preface
-  (setq
-   doom-themes-treemacs-theme "doom-colors"
-   light-theme "doom-oksolar-light"
-   dark-theme "doom-material-dark")
-  :init
-  (load-theme (intern dark-theme) t)
-
-  (defun gg-switch-theme()
-    (interactive)
-    (let* ((theme (car custom-enabled-themes))
-           (change (if (string= theme light-theme) dark-theme light-theme)))
-      (load-theme (intern change) t)
-      (setq selected-theme change)
-      (message "Theme switched from %s to %s" theme change)))
-  (global-set-key (kbd "<f8>") 'gg-switch-theme)
-
-  :config
-  (doom-themes-neotree-config)
-  (with-eval-after-load 'doom-themes
-    (doom-themes-treemacs-config))
-  (set-face-attribute 'default nil :font "Menlo 13")
-  (set-face-attribute 'region nil :background "#000" :foreground "#ffffff"))
-
-;; dimmer
+;; dimmer (for the night)
 ;;(use-package dimmer
 ;;  :ensure t
 ;;  :init
@@ -407,28 +377,23 @@
   :mode (("\\.html?\\'" . web-mode))
   :config
   (setq web-mode-markup-indent-offset 2
-	  web-mode-enable-auto-indentation nil
-	  web-mode-css-indent-offset 2
-	  web-mode-code-indent-offset 2
-	  web-mode-block-padding 2
-	  web-mode-comment-style 2
-	  web-mode-enable-css-colorization t
-	  web-mode-enable-auto-pairing t
-	  web-mode-enable-comment-keywords t
-	  web-mode-enable-current-element-highlight t
-	  web-mode-enable-current-column-highlight t
-	  web-mode-content-types-alist  '(("django" . "\\.tpl\\'")))
+	web-mode-enable-auto-indentation nil
+	web-mode-css-indent-offset 2
+	web-mode-code-indent-offset 2
+	web-mode-block-padding 2
+	web-mode-comment-style 2
+	web-mode-enable-css-colorization t
+	web-mode-enable-auto-pairing t
+	web-mode-enable-comment-keywords t
+	web-mode-enable-current-element-highlight t
+	web-mode-enable-current-column-highlight t
+	web-mode-content-types-alist  '(("django" . "\\.tpl\\'")))
   :hook (web-mode . auto-rename-tag-mode))
 
 (use-package auto-rename-tag
   :ensure t
   :hook
   (tsx-ts-mode . auto-rename-tag-mode))
-
-(eval-after-load 'yasnippet
-  '(let ((dir "~/.emacs.d/snippets/web-mode"))
-      (add-to-list 'yas-snippet-dirs dir)
-      (yas-load-directory dir)))
 
 ;;;-------------------------------------------------------------------
 ;;; Misc-Modes
@@ -520,8 +485,8 @@
 		("\\.pl$"       .       cperl-mode)
 		("\\.pm$"       .       cperl-mode)
 		("\\.java$"     .       java-mode)
-		; ("\\.js$"     .       js2-mode) ;
-		; ("\\.json$"   .       json-mode) ;
+		("\\.js$"       .       js2-mode)
+		("\\.json$"     .       json-mode)
 		("\\.tcl$"      .       tcl-mode)
 		("\\.ts$"       .       typescript-mode)
 		("\\.sql$"      .       sql-mode)
@@ -608,53 +573,43 @@
 ;;(require 'lsp-treemacs)
 ;;(lsp-treemacs-sync-mode 1)
 
-(defun ecma-server-program (_)
-  "Decide which server to use for ECMA Script based on project characteristics."
-  (cond ((deno-project-p) '("deno" "lsp" :initializationOptions
-  (:enable t :lint t)))
-  ((node-project-p) '("typescript-language-server" "--stdio"))
-  (t                nil)))
-
-  ;; source: https://manueluberti.eu/2022/09/01/consult-xref.html
-  (defun mu-project-find-regexp ()
+(defun mu-project-find-regexp ()
   "Use project-find-regexp' with completion."
   (interactive)
   (defvar xref-show-xrefs-function)
   (let ((xref-show-xrefs-function #'consult-xref))
-  (if-let ((tap (thing-at-point 'symbol)))
-  (project-find-regexp tap)
-  (call-interactively #'project-find-regexp))))
+    (if-let ((tap (thing-at-point 'symbol)))
+	(project-find-regexp tap)
+      (call-interactively #'project-find-regexp))))
 
-  (defun eglot-shutdown-project ()
+(defun eglot-shutdown-project ()
   "Kill the LSP server for the current project if it exists."
   (when-let ((server (eglot-current-server)))
-  (ignore-errors (eglot-shutdown server))))
+    (ignore-errors (eglot-shutdown server))))
 
-  (use-package eglot
+(use-package eglot
   :ensure nil
   :init
   (put 'eglot-server-programs 'safe-local-variable 'listp)
   :hook
   (typescript-ts-mode . eglot-ensure)
   (js-mode . eglot-ensure)
+  (json-mode . eglot-ensure)
   (js-ts-mode . eglot-ensure)
   (tsx-ts-mode . eglot-ensure)
   (web-mode . eglot-ensure)
-  (ruby-ts-mode . eglot-ensure)
-  (prisma-mode . eglot-ensure)
-  (eglot-managed-mode . flymake-eslint-enable-maybe)
+  (python-mode . eglot-ensure)
+  (c-mode . eglot-ensure)
 
   :bind (:map eglot-mode-map
-  ("C-c ." . eglot-code-actions)
-  ("C-c e r"
-  . eglot-rename)
-  ("C-c e f" . eglot-format)
-  ("M-?" . xref-find-references)
-  ("M-." . xref-find-definitions)
-  ("C-c f n" . flymake-goto-next-error)
-  ("C-c
-  f p" . flymake-goto-prev-error)
-  ("C-c f d" . flymake-show-project-diagnostics))
+	      ("C-c ." . eglot-code-actions)
+	      ("C-c e r" . eglot-rename)
+	      ("C-c e f" . eglot-format)
+	      ("M-?" . xref-find-references)
+	      ("M-." . xref-find-definitions)
+	      ("C-c f n" . flymake-goto-next-error)
+	      ("C-c f p" . flymake-goto-prev-error)
+	      ("C-c f d" . flymake-show-project-diagnostics))
   :custom
   (eglot-autoshutdown t)
   (eglot-menu-string "LSP")
@@ -663,14 +618,9 @@
   (fset #'jsonrpc--log-event #'ignore)
   (put 'eglot-error 'flymake-overlay-control nil)
   (put 'eglot-note 'flymake-overlay-control nil)
-  (put 'eglot-warning
-  'flymake-overlay-control nil)
+  (put 'eglot-warning 'flymake-overlay-control nil)
   (advice-add 'eglot--apply-workspace-edit :after #'me/project-save)
-  (advice-add 'project-kill-buffers :before
-  #'me/eglot-shutdown-project)
-  (add-to-list 'eglot-server-programs '((js-ts-mode tsx-ts-mode
-  typescript-ts-mode) . ecma-server-program)))
-
+  (advice-add 'project-kill-buffers :before #'me/eglot-shutdown-project))
 
 ;;; ----------------------------------------------------------------------
 ;;; git
@@ -723,10 +673,7 @@
   :hook (completion-list-mode . consult-preview-at-point-mode)
   :init
   (autoload 'projectile-project-root "projectile")
-  (setq register-preview-delay 0
-        register-preview-function #'consult-register-format
-        xref-show-xrefs-function #'consult-xref
-        xref-show-definitions-function #'consult-xref))
+  )
 
 ;;; ----------------------------------------------------------------------
 ;;; theme for markdown
@@ -760,10 +707,73 @@
                   (make-llm-ollama
                    :chat-model "mistral" :embedding-model "mistral")))
 
-(use-package elisa
-  :ensure (elisa
-           :type git :host github
-           :repo "s-kostyaev/elisa"))
+;;(use-package elisa
+;;  :ensure (elisa
+;;           :type git :host github
+;;           :repo "s-kostyaev/elisa"))
+
+;;; ----------------------------------------------------------------------
+;;; projectile
+;;; ----------------------------------------------------------------------
+(use-package projectile
+  :ensure t
+  :init
+  (projectile-mode +1)
+  :bind (
+	   ("C-c p" . projectile-command-map)
+	   ("M-[" . projectile-previous-project-buffer)
+	   ("M-]" . projectile-next-project-buffer))
+  :config
+  (setq projectile-indexing-method 'hybrid
+	  projectile-sort-order 'recently-active
+	  compilation-read-command nil
+	  projectile-comint-mode t)
+
+  (add-to-list 'projectile-globally-ignored-directories "node_modules")
+  (add-to-list 'projectile-globally-ignored-files "yarn.lock")
+  :custom
+  (projectile-globally-ignored-buffers '("*scratch*" "*lsp-log*" "*xref*" "*EGLOT" "*Messages*" "*compilation" "*vterm*" "*Flymake")))
+
+;;; ----------------------------------------------------------------------
+;;; dashboard
+;;; ----------------------------------------------------------------------
+;; use-package with Elpaca:
+(use-package dashboard
+  :elpaca t
+  :config
+  (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
+  (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
+  (dashboard-setup-startup-hook))
+
+;; Set the title
+(setq dashboard-banner-logo-title "Bonjour Pierre")
+;; Set the banner
+(setq dashboard-startup-banner "~/src/workbench/.emacs.d/spin.png")
+;; Value can be:
+;;  - 'official which displays the official emacs logo.
+;;  - 'logo which displays an alternative emacs logo.
+;;  - an integer which displays one of the text banners
+;;    (see dashboard-banners-directory files).
+;;  - a string that specifies a path for a custom banner
+;;    currently supported types are gif/image/text/xbm.
+;;  - a cons of 2 strings which specifies the path of an image to use
+;;    and other path of a text file to use if image isn't supported.
+;;    ("path/to/image/file/image.png" . "path/to/text/file/text.txt").
+;;  - a list that can display an random banner,
+;;    supported values are: string (filepath), 'official, 'logo and integers.
+
+(setq dashboard-vertically-center-content t)
+
+(setq dashboard-items '((recents   . 5)
+                        (bookmarks . 5)
+                        (projects  . 5)
+                        (agenda    . 5)
+                        (registers . 5)))
+(setq dashboard-icon-type 'all-the-icons)  ; use `all-the-icons' package
+(setq dashboard-set-heading-icons t)
+(setq dashboard-set-file-icons t)
+(setq dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name)
+
 
 ;;; ----------------------------------------------------------------------
 ;;; which-key
