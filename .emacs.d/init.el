@@ -145,7 +145,7 @@
 ;	  '(lambda () (setq debug-on-error t)))
 ;(debug-on-entry 'command-line-1)
 ;(setq message-log-max 1000)
-(load-theme 'misterioso)
+;; (load-theme 'misterioso)
 
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 160 1000 1000))
@@ -153,56 +153,56 @@
 ;;;-------------------------------------------------------------------
 ;;; package manager
 ;;;-------------------------------------------------------------------
- (setq package-enable-at-startup nil)
- (defvar elpaca-installer-version 0.7)
- (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
- (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
- (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
- (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-				:ref nil
-				:files (:defaults "elpaca-test.el" (:exclude "extensions"))
-				:build (:not elpaca--activate-package)))
- (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
-	 (build (expand-file-name "elpaca/" elpaca-builds-directory))
-	 (order (cdr elpaca-order))
-	 (default-directory repo))
-   (add-to-list 'load-path (if (file-exists-p build) build repo))
-   (unless (file-exists-p repo)
-     (make-directory repo t)
-     (when (< emacs-major-version 28) (require 'subr-x))
-     (condition-case-unless-debug err
-	  (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-		   ((zerop (call-process "git" nil buffer t "clone"
-					 (plist-get order :repo) repo)))
-		   ((zerop (call-process "git" nil buffer t "checkout"
-					 (or (plist-get order :ref) "--"))))
-		   (emacs (concat invocation-directory invocation-name))
-		   ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-					 "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-		   ((require 'elpaca))
-		   ((elpaca-generate-autoloads "elpaca" repo)))
-	      (progn (message "%s" (buffer-string)) (kill-buffer buffer))
-	    (error "%s" (with-current-buffer buffer (buffer-string))))
-	((error) (warn "%s" err) (delete-directory repo 'recursive))))
-   (unless (require 'elpaca-autoloads nil t)
-     (require 'elpaca)
-     (elpaca-generate-autoloads "elpaca" repo)
-     (load "./elpaca-autoloads")))
- (add-hook 'after-init-hook #'elpaca-process-queues)
- (elpaca `(,@elpaca-order))
+(setq package-enable-at-startup nil)
+(defvar elpaca-installer-version 0.7)
+(defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+			      :ref nil
+			      :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+			      :build (:not elpaca--activate-package)))
+(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+       (build (expand-file-name "elpaca/" elpaca-builds-directory))
+       (order (cdr elpaca-order))
+       (default-directory repo))
+  (add-to-list 'load-path (if (file-exists-p build) build repo))
+  (unless (file-exists-p repo)
+    (make-directory repo t)
+    (when (< emacs-major-version 28) (require 'subr-x))
+    (condition-case-unless-debug err
+	(if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+		 ((zerop (call-process "git" nil buffer t "clone"
+				       (plist-get order :repo) repo)))
+		 ((zerop (call-process "git" nil buffer t "checkout"
+				       (or (plist-get order :ref) "--"))))
+		 (emacs (concat invocation-directory invocation-name))
+		 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+				       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+		 ((require 'elpaca))
+		 ((elpaca-generate-autoloads "elpaca" repo)))
+	    (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+	  (error "%s" (with-current-buffer buffer (buffer-string))))
+      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+  (unless (require 'elpaca-autoloads nil t)
+    (require 'elpaca)
+    (elpaca-generate-autoloads "elpaca" repo)
+    (load "./elpaca-autoloads")))
+(add-hook 'after-init-hook #'elpaca-process-queues)
+(elpaca `(,@elpaca-order))
 
- ;; Install use-package support
- (elpaca elpaca-use-package
-   ;; Enable use-package :ensure support for Elpaca.
-   (elpaca-use-package-mode))
+;; Install use-package support
+(elpaca elpaca-use-package
+	;; Enable use-package :ensure support for Elpaca.
+	(elpaca-use-package-mode))
 
- ;; Block until current queue processed.
- (elpaca-wait)
+;; Block until current queue processed.
+(elpaca-wait)
 
- ;;Turns off elpaca-use-package-mode current declaration
- ;;Note this will cause the declaration to be interpreted immediately (not deferred).
- ;;Useful for configuring built-in emacs features.
- (use-package emacs :ensure nil :config (setq ring-bell-function #'ignore))
+;;Turns off elpaca-use-package-mode current declaration
+;;Note this will cause the declaration to be interpreted immediately (not deferred).
+;;Useful for configuring built-in emacs features.
+(use-package emacs :ensure nil :config (setq ring-bell-function #'ignore))
 
 ;;;-------------------------------------------------------------------
 ;;; Lisp code :
@@ -321,12 +321,12 @@
   (set-face-attribute 'region nil :background "#000" :foreground "#ffffff"))
 
 ;; dimmer
-(use-package dimmer
-  :ensure t
-  :init
-  (dimmer-mode t)
-  :config
-  (setq dimmer-fraction 0.3))
+;;(use-package dimmer
+;;  :ensure t
+;;  :init
+;;  (dimmer-mode t)
+;;  :config
+;;  (setq dimmer-fraction 0.9))
 
 
 ;;; ----------------------------------------------------------------------
@@ -603,13 +603,74 @@
 ;;; ----------------------------------------------------------------------
 ;;; lsp or eglot?
 ;;; ----------------------------------------------------------------------
-(require 'lsp-mode)
-(require 'lsp-ui)
-(require 'lsp-treemacs)
-(lsp-treemacs-sync-mode 1)
+;;(require 'lsp-mode)
+;;(require 'lsp-ui)
+;;(require 'lsp-treemacs)
+;;(lsp-treemacs-sync-mode 1)
 
-;;(use-package eglot
-;;  :ensure t)
+(defun ecma-server-program (_)
+  "Decide which server to use for ECMA Script based on project characteristics."
+  (cond ((deno-project-p) '("deno" "lsp" :initializationOptions
+  (:enable t :lint t)))
+  ((node-project-p) '("typescript-language-server" "--stdio"))
+  (t                nil)))
+
+  ;; source: https://manueluberti.eu/2022/09/01/consult-xref.html
+  (defun mu-project-find-regexp ()
+  "Use project-find-regexp' with completion."
+  (interactive)
+  (defvar xref-show-xrefs-function)
+  (let ((xref-show-xrefs-function #'consult-xref))
+  (if-let ((tap (thing-at-point 'symbol)))
+  (project-find-regexp tap)
+  (call-interactively #'project-find-regexp))))
+
+  (defun eglot-shutdown-project ()
+  "Kill the LSP server for the current project if it exists."
+  (when-let ((server (eglot-current-server)))
+  (ignore-errors (eglot-shutdown server))))
+
+  (use-package eglot
+  :ensure nil
+  :init
+  (put 'eglot-server-programs 'safe-local-variable 'listp)
+  :hook
+  (typescript-ts-mode . eglot-ensure)
+  (js-mode . eglot-ensure)
+  (js-ts-mode . eglot-ensure)
+  (tsx-ts-mode . eglot-ensure)
+  (web-mode . eglot-ensure)
+  (ruby-ts-mode . eglot-ensure)
+  (prisma-mode . eglot-ensure)
+  (eglot-managed-mode . flymake-eslint-enable-maybe)
+
+  :bind (:map eglot-mode-map
+  ("C-c ." . eglot-code-actions)
+  ("C-c e r"
+  . eglot-rename)
+  ("C-c e f" . eglot-format)
+  ("M-?" . xref-find-references)
+  ("M-." . xref-find-definitions)
+  ("C-c f n" . flymake-goto-next-error)
+  ("C-c
+  f p" . flymake-goto-prev-error)
+  ("C-c f d" . flymake-show-project-diagnostics))
+  :custom
+  (eglot-autoshutdown t)
+  (eglot-menu-string "LSP")
+  (eglot-confirm-server-initiated-edits nil)
+  :config
+  (fset #'jsonrpc--log-event #'ignore)
+  (put 'eglot-error 'flymake-overlay-control nil)
+  (put 'eglot-note 'flymake-overlay-control nil)
+  (put 'eglot-warning
+  'flymake-overlay-control nil)
+  (advice-add 'eglot--apply-workspace-edit :after #'me/project-save)
+  (advice-add 'project-kill-buffers :before
+  #'me/eglot-shutdown-project)
+  (add-to-list 'eglot-server-programs '((js-ts-mode tsx-ts-mode
+  typescript-ts-mode) . ecma-server-program)))
+
 
 ;;; ----------------------------------------------------------------------
 ;;; git
@@ -630,6 +691,44 @@
 		     :italic t))))
 
 ;;; ----------------------------------------------------------------------
+;;; vertigo
+;;; ----------------------------------------------------------------------
+(use-package vertico
+  :ensure t
+  :init
+  (vertico-mode)
+  :custom
+  (vertico-group-separator ((t (:inherit all-the-icons-dorange :strike-through t))))
+  (vertico-group-title ((t (:inherit all-the-icons-dorange :slant italic)))))
+
+(use-package savehist
+  :init
+  (savehist-mode))
+
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
+
+;;; ----------------------------------------------------------------------
+;;; consult
+;;; ----------------------------------------------------------------------
+(use-package consult
+  :ensure t
+  :bind (("C-M-l" . consult-imenu)
+         ("C-s" . consult-line)
+         ("C-M-g" . consult-ripgrep)
+         ("C-M-o" . consult-org-heading))
+  :hook (completion-list-mode . consult-preview-at-point-mode)
+  :init
+  (autoload 'projectile-project-root "projectile")
+  (setq register-preview-delay 0
+        register-preview-function #'consult-register-format
+        xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref))
+
+;;; ----------------------------------------------------------------------
 ;;; theme for markdown
 ;;; ----------------------------------------------------------------------
 
@@ -641,6 +740,34 @@
   :hook ((markdown-mode . olivetti-mode)
 	 (org-mode . olivetti-mode)))
 
+;;; ----------------------------------------------------------------------
+;;; which-key
+;;; ----------------------------------------------------------------------
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode))
+
+;;; ----------------------------------------------------------------------
+;;; LLM
+;;; ----------------------------------------------------------------------
+(use-package ellama
+  :ensure t
+  :config
+  (setopt ellama-language "English")
+  (require 'llm-ollama)
+  (setopt ellama-provider
+                  (make-llm-ollama
+                   :chat-model "mistral" :embedding-model "mistral")))
+
+(use-package elisa
+  :ensure (elisa
+           :type git :host github
+           :repo "s-kostyaev/elisa"))
+
+;;; ----------------------------------------------------------------------
+;;; which-key
+;;; ----------------------------------------------------------------------
 ;;; ----------------------------------------------------------------------
 ;;; custom
 ;;; ----------------------------------------------------------------------
