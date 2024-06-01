@@ -609,7 +609,9 @@
   (add-to-list 'eglot-server-programs '((rust-ts-mode rust-mode) . ("rust-analyzer")))
   (add-to-list 'eglot-server-programs '((markdown-mode) . ("marksman")))
   (add-to-list 'eglot-server-programs '((sh-mode bash-ts-mode) . ("bash-language-server" "start")))
-  (add-to-list 'eglot-server-programs '((rust-ts-mode rust-mode) . ("rust-analyzer"))))
+  (add-to-list 'eglot-server-programs '((rust-ts-mode rust-mode) . ("rust-analyzer")))
+  (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
+  )
 
 ;;; ----------------------------------------------------------------------
 ;;; git
