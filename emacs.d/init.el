@@ -2,6 +2,7 @@
 ;;; Commentary:
 ;;;  01 Jun 24 :  add some custom conf for macOS
 ;;;            +  switch to elpaca to install packages
+;;;            +  merged LSP servers into lsp directory
 ;;;  25 Sep 23 :  switch to emacs29
 ;;;  24 Sep 23 :  add support for typescript
 ;;;  07 Mar 23 :  installed lsp and ruff: best python experience so far
@@ -206,7 +207,7 @@
 ;;;-------------------------------------------------------------------
 ;;; Lisp code not managed by elpaca
 ;;;-------------------------------------------------------------------
-(add-to-list 'load-path "~/src/workbench/.emacs.d/share")
+(add-to-list 'load-path "~/src/workbench/emacs.d/share")
 
 ;;; -------------------------------------------------------------------
 ;;  global settings
@@ -222,12 +223,12 @@
 ;;  global keys
 ;;; -------------------------------------------------------------------
 (global-set-key (kbd "M-g") 'goto-line)
-(global-set-key (kbd "C-c s") 'sort-lines)
 (global-set-key (kbd "C-c c") 'comment-region)
 (global-set-key (kbd "C-c d") 'uncomment-region)
 
 (global-set-key (kbd "<f7>") (lambda() (interactive)(load-theme "tango-light")))
 (global-set-key (kbd "<f8>") (lambda() (interactive)(load-theme "tango-dark")))
+(global-set-key (kbd "<f12>") (lambda() (interactive)(next-error)))
 
 ;;;  -------------------------------------------------------------------
 ;;   MacOS
@@ -237,16 +238,7 @@
   (setq mac-option-modifier 'alt)
   (setq mac-command-modifier 'meta)
 
-  ;; Keys for visiting next & previous windows
-  (global-set-key (kbd "<A-tab>") #'other-window)
-  (global-set-key (kbd "<A-S-tab>")
-                  #'(lambda () (interactive) (other-window -1)))
-
-  ;; Keys for visiting next & previous frame
-  (global-set-key (kbd "M-`") #'other-frame)
-  (global-set-key (kbd "M-~") #'(lambda () (interactive) (other-frame -1)))
-
-  ;; sets fn-delete to be right-delete
+    ;; sets fn-delete to be right-delete
   (global-set-key [kp-delete] 'delete-char)
   (menu-bar-mode 1)
 
@@ -273,14 +265,7 @@
   :hook (dired-mode . all-the-icons-dired-mode))
 
 ;; more icons
-;;(use-package nerd-icons
-  ;; :custom
-  ;; The Nerd Font you want to use in GUI
-  ;; "Symbols Nerd Font Mono" is the default and is recommended
-  ;; but you can use any other Nerd Font if you want
-  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
-;;  )
-
+;;(use-package nerd-icons)
 ;;(use-package nerd-icons-dired
 ;;  :hook
 ;;  (dired-mode . nerd-icons-dired-mode))
@@ -306,7 +291,7 @@
   :ensure t
   :init
   :config
-  (yas-load-directory "~/src/workbench/.emacs.d/snippets")
+  (yas-load-directory "~/src/workbench/emacs.d/snippets")
   (yas-global-mode 1))
 
 ;;;-------------------------------------------------------------------
@@ -359,31 +344,33 @@
 ;;;-------------------------------------------------------------------
 ;;; perl mode
 ;;;-------------------------------------------------------------------
-(autoload 'cperl-mode  "cperl-mode"  "Cperl major mode." t)
-; (setq cperl-hairy t)
+;; (use-package cperl-mode  :ensure t)
+;; (setq cperl-hairy t)
 
 ;;;-------------------------------------------------------------------
 ;;; markdown and grip
 ;;;-------------------------------------------------------------------
-(autoload 'markdown-mode "markdown"  "Major mode to edit Markdown files." t)
-(autoload 'grip-mode "markdown"  "Minor mode to edit Markdown files." t)
+(use-package markdown-mode :ensure t)
+(use-package grip-mode :ensure t)
 (add-hook 'markdown-mode-hook #'grip-mode)
 
 ;;;-------------------------------------------------------------------
 ;;; Misc-Modes
 ;;;-------------------------------------------------------------------
-(autoload 'antlr-mode  "antlr-mode"  "ANTLR major mode." t)
-(autoload 'awk-mode    "cc-mode"     "AWK Editing Mode." t)
-(autoload 'c++-mode    "cc-mode"     "C++ Editing Mode." t)
-(autoload 'c-mode      "cc-mode"     "C Editing Mode." t)
-(autoload 'css-mode    "css-mode"    "Major mode to edit CSS files." t)
-(autoload 'erlang-mode "erlang"      "Major mode to edit Erlang files." t)
-(autoload 'java-mode   "cc-mode"     "Java Editing Mode." t)
-(autoload 'php-mode    "php-mode"    "PHP major mode." t)
-(autoload 'rust-mode   "rust-mode"   "Rust major mode" t)
-(autoload 'sgml-mode   "psgml"       "Major mode to edit SGML files." t)
-(autoload 'xml-mode    "psgml"       "Major mode to edit XML files." t)
+;; (use-package antlr-mode :ensure t)
+;; (use-package awk-mode :ensure t)
+;; (use-package cc-mode :ensure t)
+;; (use-package c-mode :ensure t)
 
+;; replaced by web-mode
+;; (use-package css-mode :ensure t)
+;; (use-package sgml-mode :ensure t)
+;; (use-package xml-mode :ensure t)
+
+;; (use-package erlang-mode :ensure t)
+;; (use-package java-mode :ensure t)
+;; (use-package php-mode :ensure t)
+(use-package rust-mode :ensure t)
 (use-package csv-mode :ensure t)
 
 ;;;-------------------------------------------------------------------
@@ -586,7 +573,7 @@
   :init
   (put 'eglot-server-programs 'safe-local-variable 'listp)
   :hook
-  (add-to-list 'eglot-server-programs '((sh-mode bash-ts-mode) . ("bash-language-server" "start")))
+  ;; eglot-ensure
   (typescript-ts-mode . eglot-ensure)
   (js-mode . eglot-ensure)
   (json-mode . eglot-ensure)
@@ -597,13 +584,14 @@
   (c-mode . eglot-ensure)
   (sh-mode . eglot-ensure)
   (bash-ts-mode . eglot-ensure)
+  (markdown-mode . eglot-ensure)
+  (rust-mode . eglot-ensure)
+  (rust-ts-mode . eglot-ensure)
 
   :bind (:map eglot-mode-map
-	      ("C-c ." . eglot-code-actions)
+	      ("C-c e ." . eglot-code-actions)
 	      ("C-c e r" . eglot-rename)
 	      ("C-c e f" . eglot-format)
-	      ("M-?" . xref-find-references)
-	      ("M-." . xref-find-definitions)
 	      ("C-c f n" . flymake-goto-next-error)
 	      ("C-c f p" . flymake-goto-prev-error)
 	      ("C-c f d" . flymake-show-project-diagnostics))
@@ -617,7 +605,11 @@
   (put 'eglot-note 'flymake-overlay-control nil)
   (put 'eglot-warning 'flymake-overlay-control nil)
   (advice-add 'eglot--apply-workspace-edit :after #'me/project-save)
-  (advice-add 'project-kill-buffers :before #'me/eglot-shutdown-project))
+  (advice-add 'project-kill-buffers :before #'me/eglot-shutdown-project)
+  (add-to-list 'eglot-server-programs '((rust-ts-mode rust-mode) . ("rust-analyzer")))
+  (add-to-list 'eglot-server-programs '((markdown-mode) . ("marksman")))
+  (add-to-list 'eglot-server-programs '((sh-mode bash-ts-mode) . ("bash-language-server" "start")))
+  (add-to-list 'eglot-server-programs '((rust-ts-mode rust-mode) . ("rust-analyzer"))))
 
 ;;; ----------------------------------------------------------------------
 ;;; git
@@ -626,16 +618,16 @@
 (use-package blamer
   :ensure t
   :bind (("s-i" . blamer-show-commit-info)
-	   ("s-n" . blamer-mode))
+	 ("s-n" . blamer-mode))
   :defer 20
   :custom
   (blamer-idle-time 0.3)
   (blamer-min-offset 10)
   :custom-face
   (blamer-face ((t :foreground "#9099AB"
-		     :background nil
-		     :height .9
-		     :italic t))))
+		   :background nil
+		   :height .9
+		   :italic t))))
 
 ;;; ----------------------------------------------------------------------
 ;;; vertigo
@@ -663,11 +655,7 @@
 ;;; ----------------------------------------------------------------------
 (use-package consult
   :ensure t
-  :bind (("C-M-l" . consult-imenu)
-         ("C-s" . consult-line)
-         ("C-M-g" . consult-ripgrep)
-         ("C-M-o" . consult-org-heading))
-  :hook (completion-list-mode . consult-preview-at-point-mode)
+  :bind ("C-s" . consult-line)
   :init
   (autoload 'projectile-project-root "projectile")
   )
@@ -736,7 +724,7 @@
 ;;; ----------------------------------------------------------------------
 ;; use-package with Elpaca:
 (use-package dashboard
-  :elpaca t
+  :ensure t
   :config
   (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
   (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
@@ -773,8 +761,55 @@
 
 
 ;;; ----------------------------------------------------------------------
-;;; which-key
+;;; compile
 ;;; ----------------------------------------------------------------------
+(use-package compile
+  :ensure nil
+  :custom
+  (compilation-scroll-output 'first-error)
+  (compilation-always-kill t)
+  (compilation-max-output-line-length nil)
+  :hook (compilation-mode . hl-line-mode)
+  :init
+
+  (add-hook 'compilation-finish-functions
+	    (lambda
+	      (buf str)
+              (if (null (string-match ".*exited abnormally.*" str))
+	          ;;no errors, make the compilation
+		  window go away in a few seconds
+                  (progn
+		    (run-at-time
+		     "1 sec" nil 'delete-windows-on
+
+		     (get-buffer-create "*compilation*"))
+                    (message "No Compilation Errors!"))))))
+
+(use-package fancy-compilation
+  :ensure t
+  :defer 3
+  :config
+  (fancy-compilation-mode)
+  :custom
+  (fancy-compilation-scroll-output 'first-error))
+
+;;; ----------------------------------------------------------------------
+;;; elfeed
+;;; ----------------------------------------------------------------------
+(use-package elfeed
+  :ensure t
+  :custom
+  (elfeed-db-directory
+   (expand-file-name "elfeed" user-emacs-directory))
+  (elfeed-show-entry-switch 'display-buffer))
+
+(setq elfeed-feeds
+      '("http://nullprogram.com/feed/"
+	"https://planet.emacslife.com/atom.xml"
+	"https://www.audiosciencereview.com/forum/index.php?reviews/index.rss"
+	"https://www.audiosciencereview.com/forum/index.php?forums/speaker-reviews-measurements-and-discussion.54/index.rss"
+	))
+
 ;;; ----------------------------------------------------------------------
 ;;; custom
 ;;; ----------------------------------------------------------------------
