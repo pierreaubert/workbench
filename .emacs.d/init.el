@@ -352,9 +352,9 @@
 ;;;-------------------------------------------------------------------
 ;;; autocomplete for python & others
 ;;;-------------------------------------------------------------------
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-(ac-config-default)
+;; (require 'auto-complete-config)
+;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+;; (ac-config-default)
 
 ;;;-------------------------------------------------------------------
 ;;; perl mode
@@ -368,32 +368,6 @@
 (autoload 'markdown-mode "markdown"  "Major mode to edit Markdown files." t)
 (autoload 'grip-mode "markdown"  "Minor mode to edit Markdown files." t)
 (add-hook 'markdown-mode-hook #'grip-mode)
-
-;;;-------------------------------------------------------------------
-;;; Web-Mode
-;;;-------------------------------------------------------------------
-(use-package web-mode
-  :ensure t
-  :mode (("\\.html?\\'" . web-mode))
-  :config
-  (setq web-mode-markup-indent-offset 2
-	web-mode-enable-auto-indentation nil
-	web-mode-css-indent-offset 2
-	web-mode-code-indent-offset 2
-	web-mode-block-padding 2
-	web-mode-comment-style 2
-	web-mode-enable-css-colorization t
-	web-mode-enable-auto-pairing t
-	web-mode-enable-comment-keywords t
-	web-mode-enable-current-element-highlight t
-	web-mode-enable-current-column-highlight t
-	web-mode-content-types-alist  '(("django" . "\\.tpl\\'")))
-  :hook (web-mode . auto-rename-tag-mode))
-
-(use-package auto-rename-tag
-  :ensure t
-  :hook
-  (tsx-ts-mode . auto-rename-tag-mode))
 
 ;;;-------------------------------------------------------------------
 ;;; Misc-Modes
@@ -485,7 +459,7 @@
 		("\\.pl$"       .       cperl-mode)
 		("\\.pm$"       .       cperl-mode)
 		("\\.java$"     .       java-mode)
-		("\\.js$"       .       js2-mode)
+		("\\.js$"       .       js-mode)
 		("\\.json$"     .       json-mode)
 		("\\.tcl$"      .       tcl-mode)
 		("\\.ts$"       .       typescript-mode)
@@ -500,22 +474,42 @@
                 )
               )
 
+;;;-------------------------------------------------------------------
+;;; Web-Mode
+;;;-------------------------------------------------------------------
+(use-package web-mode
+  :ensure t
+  :mode (("\\.html?\\'" . web-mode))
+  :config
+  (setq web-mode-markup-indent-offset 2
+	web-mode-enable-auto-indentation nil
+	web-mode-css-indent-offset 2
+	web-mode-code-indent-offset 2
+	web-mode-block-padding 2
+	web-mode-comment-style 2
+	web-mode-enable-css-colorization t
+	web-mode-enable-auto-pairing t
+	web-mode-enable-comment-keywords t
+	web-mode-enable-current-element-highlight t
+	web-mode-enable-current-column-highlight t
+	web-mode-content-types-alist  '(("django" . "\\.tpl\\'")))
+  :hook (web-mode . auto-rename-tag-mode))
+
+(use-package auto-rename-tag
+  :ensure t
+  :hook
+  (tsx-ts-mode . auto-rename-tag-mode))
+
 ;;; ----------------------------------------------------------------------
 ;;; javascrip: js2
 ;;; ----------------------------------------------------------------------
-(require 'js2-mode)
-(require 'js2-refactor)
+;;(require 'js2-mode)
+;;(require 'js2-refactor)
 ;; (require 'tide)
-(require 'web-mode)
-(require 'compile)
-; (require 'add-node-modules-path)
-
-(custom-set-default 'js-indent-level 4)
-(custom-set-default 'js2-basic-offset 4)
-
-(js2r-add-keybindings-with-prefix "C-c C-r")
-
-(add-to-list 'auto-mode-alist '("\\.js\\'"    . js2-mode))
+;; (require 'add-node-modules-path)
+;; (custom-set-default 'js-indent-level 4)
+;; (custom-set-default 'js2-basic-offset 4)
+;; (js2r-add-keybindings-with-prefix "C-c C-r")
 
 ;;;-------------------------------------------------------------------
 ;;; SQL
