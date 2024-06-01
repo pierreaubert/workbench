@@ -586,6 +586,7 @@
   :init
   (put 'eglot-server-programs 'safe-local-variable 'listp)
   :hook
+  (add-to-list 'eglot-server-programs '((sh-mode bash-ts-mode) . ("bash-language-server" "start")))
   (typescript-ts-mode . eglot-ensure)
   (js-mode . eglot-ensure)
   (json-mode . eglot-ensure)
@@ -594,6 +595,8 @@
   (web-mode . eglot-ensure)
   (python-mode . eglot-ensure)
   (c-mode . eglot-ensure)
+  (sh-mode . eglot-ensure)
+  (bash-ts-mode . eglot-ensure)
 
   :bind (:map eglot-mode-map
 	      ("C-c ." . eglot-code-actions)
