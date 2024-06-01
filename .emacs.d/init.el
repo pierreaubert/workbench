@@ -207,8 +207,7 @@
 ;;;-------------------------------------------------------------------
 ;;; Lisp code :
 ;;;-------------------------------------------------------------------
-(add-to-list 'load-path "~/.emacs.d/vendor")
-(add-to-list 'load-path "~/share/emacs")
+(add-to-list 'load-path "~/src/workbench/.emacs.d/share")
 
 ;;; -------------------------------------------------------------------
 ;;  global settings
@@ -337,7 +336,7 @@
   :ensure t
   :init
   :config
-  (yas-load-directory "~/.emacs.d/snippets")
+  (yas-load-directory "~/src/workbench/.emacs.d/snippets")
   (yas-global-mode 1))
 
 ;;;-------------------------------------------------------------------
