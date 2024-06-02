@@ -207,12 +207,12 @@
 ;;; -------------------------------------------------------------------
 ;;;  global settings
 ;;; -------------------------------------------------------------------
-(menu-bar-mode 0)
-(tool-bar-mode 0)
+; (menu-bar-mode 0)
+; (tool-bar-mode 0)
 (column-number-mode)
 (setq ring-bell-function 'ignore)
 (defalias 'yes-or-no-p 'y-or-n-p)
-(setq use-dialog-box nil)
+; (setq use-dialog-box nil)
 (setq native-comp-async-report-warnings-errors nil)
 
 ;;; -------------------------------------------------------------------
@@ -231,49 +231,41 @@
 ;;;  -------------------------------------------------------------------
 (when (eq system-type 'darwin)
   (add-to-list 'default-frame-alist '(undecorated . t))
-  (setq mac-option-modifier 'alt)
-  (setq mac-command-modifier 'meta)
+  ;; option super meta
+					;(setq mac-option-modifier 'super)
+  (setq mac-command-modifier 'super)
+  ;(setq mac-right-option-modifier 'none)
 
-  ;; sets fn-delete to be right-delete
-  ;;(setq mac-option-modifier 'meta
-  ;;	mac-command-modifier 'super
-  ;;	mac-right-option-modifier 'none)
-
-  (global-set-key [kp-delete] 'delete-char)
-  (global-set-key (kbd "s-c") 'kill-ring-save)
-  (global-set-key (kbd "s-v") 'yank)
-  (global-set-key (kbd "s-x") 'kill-region)
-  (global-set-key (kbd "s-a") 'mark-whole-buffer)
-  (global-set-key (kbd "s-z") 'undo)
-  (global-set-key (kbd "s-f") 'isearch-forward)
-  (global-set-key (kbd "s-g") 'isearch-repeat-forward)
-  (global-set-key (kbd "s-o") 'find-file)
-  (global-set-key (kbd "s-o") 'mac-open-file)
-  (global-set-key (kbd "s-n") 'find-file)
-  (global-set-key (kbd "s-s") 'save-buffer)
-  (global-set-key (kbd "s-S") 'mac-save-file-as)
-  (global-set-key (kbd "s-p") 'mac-preview) ; requires mac-preview
-  (global-set-key (kbd "s-w") 'kill-buffer)
-  (global-set-key (kbd "s-m") 'iconify-frame)
-  (global-set-key (kbd "s-q") 'save-buffers-kill-emacs)
-  (global-set-key (kbd "s-.") 'keyboard-quit)
-  (global-set-key (kbd "s-l") 'goto-line)
-  (global-set-key (kbd "s-k") 'kill-buffer)
+  (global-set-key [kp-delete]       'delete-char)
+  (global-set-key (kbd "s-c")       'kill-ring-save)
+  (global-set-key (kbd "s-v")       'yank)
+  (global-set-key (kbd "s-x")       'kill-region)
+  (global-set-key (kbd "s-a")       'mark-whole-buffer)
+  (global-set-key (kbd "s-z")       'undo)
+  (global-set-key (kbd "s-f")       'isearch-forward)
+  (global-set-key (kbd "s-g")       'isearch-repeat-forward)
+  (global-set-key (kbd "s-o")       'find-file)
+  (global-set-key (kbd "s-o")       'mac-open-file)
+  (global-set-key (kbd "s-n")       'find-file)
+  (global-set-key (kbd "s-s")       'save-buffer)
+  (global-set-key (kbd "s-S")       'mac-save-file-as)
+  (global-set-key (kbd "s-w")       'kill-buffer)
+  (global-set-key (kbd "s-q")       'save-buffers-kill-emacs)
+  (global-set-key (kbd "s-l")       'goto-line)
+  (global-set-key (kbd "s-k")       'kill-buffer)
   (global-set-key (kbd "s-<up>")    'beginning-of-buffer)
   (global-set-key (kbd "s-<down>")  'end-of-buffer)
   (global-set-key (kbd "s-<left>")  'beginning-of-line)
   (global-set-key (kbd "s-<right>") 'end-of-line)
   (global-set-key [(meta down)]     'forward-paragraph)
   (global-set-key [(meta up)]       'backward-paragraph)
-  (menu-bar-mode 1)
 
   ;; Enable mac option to create accented characters
+  (setq ns-left-alternate-modifier 'none)
   (setq ns-alternate-modifier 'none)
   (setq frame-resize-pixelwise t)
-  (setq ns-left-alternate-modifier 'none)
 
-  )
-
+)
 
 ;;;-------------------------------------------------------------------
 ;;; modern times
@@ -314,12 +306,13 @@
 ;;; ----------------------------------------------------------------------
 ;;; snippets
 ;;; ----------------------------------------------------------------------
-(use-package yasnippet
-  :ensure t
-  :init
-  :config
-  (yas-load-directory "~/src/workbench/emacs.d/snippets")
-  (yas-global-mode 1))
+;; (use-package yasnippet
+;;   :ensure t
+;;   :init
+;;   :config
+;;   (yas-load-directory "~/src/workbench/emacs.d/snippets")
+;;   (yas-global-mode 1)
+;;   )
 
 ;;;-------------------------------------------------------------------
 ;;; coding
@@ -378,15 +371,14 @@
 ;;; markdown and grip
 ;;;-------------------------------------------------------------------
 (use-package markdown-mode :ensure t)
-(use-package grip-mode :ensure t)
-(add-hook 'markdown-mode-hook #'grip-mode)
+;; (use-package grip-mode :ensure t)
+;; (add-hook 'markdown-mode-hook #'grip-mode)
 
 ;;;-------------------------------------------------------------------
 ;;; Misc-Modes
 ;;;-------------------------------------------------------------------
 ;; (use-package antlr-mode :ensure t)
-;; (use-package awk-mode :ensure t)
-;; (use-package cc-mode :ensure t)
+;; (autoload 'cc-mode )
 ;; (use-package c-mode :ensure t)
 
 ;; replaced by web-mode
@@ -528,14 +520,14 @@
 ;;;-------------------------------------------------------------------
 ;;; SQL
 ;;;-------------------------------------------------------------------
-(use-package sql-indent :ensure t)
-(use-package sqlformat
-  :ensure t
-  :config
-  (setq sqlformat-command 'pgformatter
-	  sqlformat-args '("-s2" "-g"))
-  :hook (sql-mode . sqlformat-on-save-mode)
-  :bind (:map sql-mode-map ("C-c C-f" . sqlformat)))
+;; (use-package sql-indent :ensure t)
+;; (use-package sqlformat
+;;   :ensure t
+;;   :config
+;;   (setq sqlformat-command 'pgformatter
+;; 	  sqlformat-args '("-s2" "-g"))
+;;   :hook (sql-mode . sqlformat-on-save-mode)
+;;   :bind (:map sql-mode-map ("C-c C-f" . sqlformat)))
 
 ;;;-------------------------------------------------------------------
 ;;; flycheck or flymake
@@ -603,6 +595,8 @@
   :ensure t
   :after tree-sitter)
 
+;; (use-package awk-ts-mode :ensure t)
+
 ;;; ----------------------------------------------------------------------
 ;;; lsp or eglot?
 ;;; ----------------------------------------------------------------------
@@ -610,15 +604,6 @@
 ;;(require 'lsp-ui)
 ;;(require 'lsp-treemacs)
 ;;(lsp-treemacs-sync-mode 1)
-
-(defun mu-project-find-regexp ()
-  "Use project-find-regexp' with completion."
-  (interactive)
-  (defvar xref-show-xrefs-function)
-  (let ((xref-show-xrefs-function #'consult-xref))
-    (if-let ((tap (thing-at-point 'symbol)))
-	(project-find-regexp tap)
-      (call-interactively #'project-find-regexp))))
 
 (defun eglot-shutdown-project ()
   "Kill the LSP server for the current project if it exists."
@@ -673,7 +658,7 @@
 ;;; ----------------------------------------------------------------------
 ;;; git
 ;;; ----------------------------------------------------------------------
-(use-package magit :ensure t)
+;; (use-package magit :ensure t)
 (use-package git-timemachine :ensure t)
 (use-package blamer
   :ensure t
@@ -685,52 +670,47 @@
   (blamer-min-offset 10)
   :custom-face
   (blamer-face ((t :foreground "#9099AB"
-		   :background nil
+		   :background unspecified
 		   :height .9
 		   :italic t))))
 
 ;;; ----------------------------------------------------------------------
 ;;; vertigo
 ;;; ----------------------------------------------------------------------
-(use-package vertico
-  :ensure t
-  :init
-  (vertico-mode)
-  :custom
-  (vertico-group-separator ((t (:inherit all-the-icons-dorange :strike-through t))))
-  (vertico-group-title ((t (:inherit all-the-icons-dorange :slant italic)))))
+;; (use-package vertico
+;;   :ensure t
+;;   :init
+;;   (vertico-mode)
+
+;;   (setq vertico-scoll-margin 0)
+;;   (setq vertico-vertical-count 14)
+;;   (setq vertico-cycle t)
+
+;;   ; :custom
+;;   ; (vertico-group-separator ((t (:inherit all-the-icons-dorange :strike-through t))))
+;;   ; (vertico-group-title ((t (:inherit all-the-icons-dorange :slant italic))))
+;;   )
 
 (use-package savehist
   :init
   (savehist-mode))
 
-(use-package orderless
-  :ensure t
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles basic partial-completion)))))
-
-;;; ----------------------------------------------------------------------
-;;; consult
-;;; ----------------------------------------------------------------------
-(use-package consult
-  :ensure t
-  :bind ("C-s" . consult-line)
-  :init
-  (autoload 'projectile-project-root "projectile")
-  )
+;; (use-package orderless
+;;   :ensure t
+;;   :custom
+;;   (completion-styles '(orderless basic))
+;;   (completion-category-overrides '((file (styles basic partial-completion)))))
 
 ;;; ----------------------------------------------------------------------
 ;;; theme for markdown
 ;;; ----------------------------------------------------------------------
-
-(use-package olivetti
-  :ensure t
-  :custom
-  (olivetti-body-width 120)
-  :config
-  :hook ((markdown-mode . olivetti-mode)
-	 (org-mode . olivetti-mode)))
+;; (use-package olivetti
+;;   :ensure t
+;;   :custom
+;;   (olivetti-body-width 120)
+;;   :config
+;;   :hook ((markdown-mode . olivetti-mode)
+;; 	 (org-mode . olivetti-mode)))
 
 ;;; ----------------------------------------------------------------------
 ;;; which-key
@@ -760,47 +740,56 @@
 ;;; ----------------------------------------------------------------------
 ;;; projectile
 ;;; ----------------------------------------------------------------------
-(use-package projectile
-  :ensure t
-  :init
-  (projectile-mode +1)
-  :bind (
-	   ("C-c p" . projectile-command-map)
-	   ("M-[" . projectile-previous-project-buffer)
-	   ("M-]" . projectile-next-project-buffer))
-  :config
-  (setq projectile-indexing-method 'hybrid
-	  projectile-sort-order 'recently-active
-	  compilation-read-command nil
-	  projectile-comint-mode t)
+;; (use-package projectile
+;;   :ensure t
+;;   :init
+;;   (projectile-mode +1)
+;;   :bind (
+;; 	   ("M-[" . projectile-previous-project-buffer)
+;; 	   ("M-]" . projectile-next-project-buffer))
+;;   :config
+;;   (setq projectile-indexing-method 'hybrid
+;; 	projectile-sort-order 'recently-active
+;; 	compilation-read-command nil
+;; 	projectile-comint-mode t)
 
-  (add-to-list 'projectile-globally-ignored-directories "node_modules")
-  (add-to-list 'projectile-globally-ignored-files "yarn.lock")
-  :custom
-  (projectile-globally-ignored-buffers '("*scratch*" "*lsp-log*" "*xref*" "*EGLOT" "*Messages*" "*compilation" "*vterm*" "*Flymake")))
+;;   (add-to-list 'projectile-globally-ignored-directories "node_modules")
+;;   (add-to-list 'projectile-globally-ignored-directories "venv")
+
+;;   :custom
+;;   (projectile-globally-ignored-buffers '("*scratch*" "*lsp-log*" "*xref*" "*EGLOT" "*Messages*" "*compilation" "*vterm*" "*Flymake")))
+
+;;; ----------------------------------------------------------------------
+;;; consult
+;;; ----------------------------------------------------------------------
+;; (use-package consult
+;;   :ensure t
+;;   :bind ("C-s" . consult-line)
+;;   :init
+;;   (autoload 'projectile-project-root "~/src")
+;;   )
 
 ;;; ----------------------------------------------------------------------
 ;;; dashboard
 ;;; ----------------------------------------------------------------------
-;; use-package with Elpaca:
-(use-package dashboard
-  :ensure t
-  :config
-  (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
-  (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
-  (dashboard-setup-startup-hook))
+;; (use-package dashboard
+;;   :ensure t
+;;   :config
+;;   (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
+;;   (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
+;;   (dashboard-setup-startup-hook))
 
-;; Set the title
-(setq dashboard-banner-logo-title "Bonjour Pierre")
-;; Set the banner
-(setq dashboard-startup-banner "~/src/workbench/emacs.d/polkadot.txt")
-(setq dashboard-center-content t)
-(setq dashboard-vertically-center-content t)
-(setq dashboard-items '((recents   . 10)
-			(projects  . 10)))
-(setq dashboard-icon-type 'all-the-icons)
-(setq dashboard-set-heading-icons t)
-(setq dashboard-set-file-icons t)
+;; ;; Set the title
+;; (setq dashboard-banner-logo-title "Bonjour Pierre")
+;; ;; Set the banner
+;; (setq dashboard-startup-banner "~/src/workbench/emacs.d/polkadot.txt")
+;; (setq dashboard-center-content t)
+;; (setq dashboard-vertically-center-content t)
+;; (setq dashboard-items '((recents   . 10)
+;; 			(projects  . 10)))
+;; (setq dashboard-icon-type 'all-the-icons)
+;; (setq dashboard-set-heading-icons t)
+;; (setq dashboard-set-file-icons t)
 
 ;;; ----------------------------------------------------------------------
 ;;; compile
@@ -846,9 +835,7 @@
   (elfeed-show-entry-switch 'display-buffer))
 
 (setq elfeed-feeds
-      '("http://nullprogram.com/feed/"
-	"https://planet.emacslife.com/atom.xml"
-	"https://www.audiosciencereview.com/forum/index.php?reviews/index.rss"
+      '("https://www.audiosciencereview.com/forum/index.php?reviews/index.rss"
 	"https://www.audiosciencereview.com/forum/index.php?forums/speaker-reviews-measurements-and-discussion.54/index.rss"
 	))
 
@@ -860,15 +847,3 @@
 ;;; ----------------------------------------------------------------------
 ;;; custom
 ;;; ----------------------------------------------------------------------
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(warning-suppress-types '(((elpaca-use-package-compat)))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
