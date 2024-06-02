@@ -232,7 +232,7 @@
 (when (eq system-type 'darwin)
   (add-to-list 'default-frame-alist '(undecorated . t))
   ;; option super meta
-					;(setq mac-option-modifier 'super)
+  ;(setq mac-option-modifier 'super)
   (setq mac-command-modifier 'super)
   ;(setq mac-right-option-modifier 'none)
 
@@ -357,7 +357,7 @@
 ;;;-------------------------------------------------------------------
 ;;; autocomplete for python & others
 ;;;-------------------------------------------------------------------
-;; (require 'auto-complete-config)
+(use-package auto-complete :ensure t)
 ;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 ;; (ac-config-default)
 
@@ -383,14 +383,18 @@
 
 ;; replaced by web-mode
 ;; (use-package css-mode :ensure t)
+(use-package scss-mode :ensure t)
 ;; (use-package sgml-mode :ensure t)
 ;; (use-package xml-mode :ensure t)
+(use-package handlebars-mode :ensure t)
 
-;; (use-package erlang-mode :ensure t)
+(use-package caml :ensure t)
+(use-package erlang :ensure t)
 ;; (use-package java-mode :ensure t)
-;; (use-package php-mode :ensure t)
+(use-package php-mode :ensure t)
 (use-package rust-mode :ensure t)
 (use-package csv-mode :ensure t)
+(use-package nginx-mode :ensure t)
 
 ;;;-------------------------------------------------------------------
 ;;; Auto-Mode-Alist
@@ -465,8 +469,8 @@
 		("\\.pl$"       .       cperl-mode)
 		("\\.pm$"       .       cperl-mode)
 		("\\.java$"     .       java-mode)
-		("\\.js$"       .       js-mode)
-		("\\.json$"     .       json-mode)
+		("\\.js$"       .       js-ts-mode)
+		("\\.json$"     .       json-ts-mode)
 		("\\.tcl$"      .       tcl-mode)
 		("\\.ts$"       .       typescript-mode)
 		("\\.sql$"      .       sql-mode)
@@ -595,8 +599,6 @@
   :ensure t
   :after tree-sitter)
 
-;; (use-package awk-ts-mode :ensure t)
-
 ;;; ----------------------------------------------------------------------
 ;;; lsp or eglot?
 ;;; ----------------------------------------------------------------------
@@ -616,19 +618,34 @@
   (put 'eglot-server-programs 'safe-local-variable 'listp)
   :hook
   ;; eglot-ensure
-  (typescript-ts-mode . eglot-ensure)
-  (js-mode . eglot-ensure)
-  (json-mode . eglot-ensure)
-  (js-ts-mode . eglot-ensure)
-  (tsx-ts-mode . eglot-ensure)
-  (web-mode . eglot-ensure)
-  (python-mode . eglot-ensure)
-  (c-mode . eglot-ensure)
-  (sh-mode . eglot-ensure)
   (bash-ts-mode . eglot-ensure)
+  (c-mode . eglot-ensure)
+  (cmake-mode . eglot-ensure)
+  (cpp-mode . eglot-ensure)
+  (css-mode . eglot-ensure)
+  (csv-mode . eglot-ensure)
+  (dockerfile-mode . eglot-ensure)
+  (dockerfile-mode . eglot-ensure)
+  (elisp-mode . eglot-ensure)
+  (html-mode . eglot-ensure)
+  (js-ts-mode . eglot-ensure)
+  (json-ts-mode . eglot-ensure)
+  (js-ts-mode . eglot-ensure)
+  (golang-mode . eglot-ensure)
+  (make-mode . eglot-ensure)
   (markdown-mode . eglot-ensure)
+  (markdown-ts-mode . eglot-ensure)
+  (python-mode . eglot-ensure)
   (rust-mode . eglot-ensure)
   (rust-ts-mode . eglot-ensure)
+  (sh-mode . eglot-ensure)
+  (solidity-mode . eglot-ensure)
+  (tsx-ts-mode . eglot-ensure)
+  (typescript-ts-mode . eglot-ensure)
+  (xml-mode . eglot-ensure)
+  (yaml-mode . eglot-ensure)
+  (web-mode . eglot-ensure)
+  (zig-mode . eglot-ensure)
 
   :bind (:map eglot-mode-map
 	      ("C-c e ." . eglot-code-actions)
@@ -642,15 +659,15 @@
   (eglot-menu-string "LSP")
   (eglot-confirm-server-initiated-edits nil)
   :config
-  (fset #'jsonrpc--log-event #'ignore)
   (put 'eglot-error 'flymake-overlay-control nil)
   (put 'eglot-note 'flymake-overlay-control nil)
   (put 'eglot-warning 'flymake-overlay-control nil)
   (advice-add 'eglot--apply-workspace-edit :after #'me/project-save)
   (advice-add 'project-kill-buffers :before #'me/eglot-shutdown-project)
   (add-to-list 'eglot-server-programs '((rust-ts-mode rust-mode) . ("rust-analyzer")))
-  (add-to-list 'eglot-server-programs '((markdown-mode) . ("marksman")))
+  (add-to-list 'eglot-server-programs '((markdown-mode markdown-ts-mode) . ("marksman")))
   (add-to-list 'eglot-server-programs '((sh-mode bash-ts-mode) . ("bash-language-server" "start")))
+  (add-to-list 'eglot-server-programs '((json-mode json-ts-mode) . ("vscode-json-language-server" "start")))
   (add-to-list 'eglot-server-programs '((rust-ts-mode rust-mode) . ("rust-analyzer")))
   (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
   )
@@ -658,7 +675,7 @@
 ;;; ----------------------------------------------------------------------
 ;;; git
 ;;; ----------------------------------------------------------------------
-;; (use-package magit :ensure t)
+; (use-package magit :ensure t)
 (use-package git-timemachine :ensure t)
 (use-package blamer
   :ensure t
