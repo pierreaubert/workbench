@@ -191,28 +191,32 @@
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 
-;; Install use-package support
-(elpaca elpaca-use-package
-	;; Enable use-package :ensure support for Elpaca.
-	(elpaca-use-package-mode))
-
 ;; Block until current queue processed.
 (elpaca-wait)
 
-;;Turns off elpaca-use-package-mode current declaration
+;; Install use-package support
+(elpaca elpaca-use-package
+  ;; Enable use-package :ensure support for Elpaca.
+  (elpaca-use-package-mode))
+
 ;;Note this will cause the declaration to be interpreted immediately (not deferred).
 ;;Useful for configuring built-in emacs features.
 (use-package emacs :ensure nil :config (setq ring-bell-function #'ignore))
 
+;;;-------------------------------------------------------------------
+;;; Lisp code not managed by elpaca
+;;;-------------------------------------------------------------------
+(add-to-list 'load-path "~/src/workbench/emacs.d/share")
+
 ;;; -------------------------------------------------------------------
 ;;;  global settings
 ;;; -------------------------------------------------------------------
-; (menu-bar-mode 0)
-; (tool-bar-mode 0)
+(menu-bar-mode 0)
+(tool-bar-mode 0)
 (column-number-mode)
 (setq ring-bell-function 'ignore)
 (defalias 'yes-or-no-p 'y-or-n-p)
-; (setq use-dialog-box nil)
+(setq use-dialog-box nil)
 (setq native-comp-async-report-warnings-errors nil)
 
 ;;; -------------------------------------------------------------------
@@ -277,14 +281,18 @@
 
 ;; use icons
 (use-package all-the-icons
+  :ensure t
+  :demand t
   :if (display-graphic-p))
 
 (use-package all-the-icons-dired
+  :ensure t
+  :demand t
   :if (display-graphic-p)
   :hook (dired-mode . all-the-icons-dired-mode))
 
 ;; more icons
-;;(use-package nerd-icons)
+;; (use-package nerd-icons)
 ;;(use-package nerd-icons-dired
 ;;  :hook
 ;;  (dired-mode . nerd-icons-dired-mode))
@@ -292,6 +300,7 @@
 ;; emoji
 (use-package emojify
   :ensure t
+  :demand t
   :hook (elpaca-after-init . global-emojify-mode))
 
 ;; dimmer (for the night)
@@ -306,13 +315,12 @@
 ;;; ----------------------------------------------------------------------
 ;;; snippets
 ;;; ----------------------------------------------------------------------
-;; (use-package yasnippet
-;;   :ensure t
-;;   :init
-;;   :config
-;;   (yas-load-directory "~/src/workbench/emacs.d/snippets")
-;;   (yas-global-mode 1)
-;;   )
+(use-package yasnippet
+  :ensure t
+  :init
+  :config
+  (yas-load-directory "~/src/workbench/emacs.d/snippets")
+  (yas-global-mode 1))
 
 ;;;-------------------------------------------------------------------
 ;;; coding
@@ -329,17 +337,22 @@
 
 (use-package smartparens
   :ensure t
+  :demand t
   :config
   (smartparens-global-mode t))
 
 (use-package rainbow-delimiters
   :ensure t
+  :demand t
   :hook (prog-mode . rainbow-delimiters-mode))
 
-(use-package rainbow-mode :ensure t)
+(use-package rainbow-mode
+  :demand t
+  :ensure t)
 
 (use-package string-inflection
   :ensure t
+  :demand t
   :bind ("C-c i" . string-inflection-cycle))
 
 (global-hl-line-mode t)
@@ -351,13 +364,16 @@
 ;; indentation
 (use-package highlight-indent-guides
   :ensure t
+  :demand t
   :config
   (setq highlight-indent-guides-method 'character))
 
 ;;;-------------------------------------------------------------------
 ;;; autocomplete for python & others
 ;;;-------------------------------------------------------------------
-(use-package auto-complete :ensure t)
+(use-package auto-complete
+  :ensure t
+  :demand t)
 ;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 ;; (ac-config-default)
 
@@ -370,27 +386,33 @@
 ;;;-------------------------------------------------------------------
 ;;; markdown and grip
 ;;;-------------------------------------------------------------------
-(use-package markdown-mode :ensure t)
-;; (use-package grip-mode :ensure t)
-;; (add-hook 'markdown-mode-hook #'grip-mode)
+(use-package markdown-mode
+  :ensure t
+  :demand t)
+(use-package grip-mode
+  :ensure t
+  :demand t)
+(add-hook 'markdown-mode-hook #'grip-mode)
 
 ;;;-------------------------------------------------------------------
 ;;; Misc-Modes
 ;;;-------------------------------------------------------------------
+;; old modes
 ;; (use-package antlr-mode :ensure t)
 ;; (autoload 'cc-mode )
-;; (use-package c-mode :ensure t)
+;; (use-package cc-mode :ensure t)
+;; (use-package java-mode :ensure t)
 
 ;; replaced by web-mode
 ;; (use-package css-mode :ensure t)
-(use-package scss-mode :ensure t)
 ;; (use-package sgml-mode :ensure t)
 ;; (use-package xml-mode :ensure t)
+;; (use-package scss-mode :ensure t)
+
 (use-package handlebars-mode :ensure t)
 
 (use-package caml :ensure t)
 (use-package erlang :ensure t)
-;; (use-package java-mode :ensure t)
 (use-package php-mode :ensure t)
 (use-package rust-mode :ensure t)
 (use-package csv-mode :ensure t)
@@ -469,8 +491,8 @@
 		("\\.pl$"       .       cperl-mode)
 		("\\.pm$"       .       cperl-mode)
 		("\\.java$"     .       java-mode)
-		("\\.js$"       .       js-ts-mode)
-		("\\.json$"     .       json-ts-mode)
+		("\\.js$"       .       js-mode)
+		("\\.json$"     .       json-mode)
 		("\\.tcl$"      .       tcl-mode)
 		("\\.ts$"       .       typescript-mode)
 		("\\.sql$"      .       sql-mode)
@@ -505,33 +527,22 @@
 	web-mode-content-types-alist  '(("django" . "\\.tpl\\'")))
   :hook (web-mode . auto-rename-tag-mode))
 
-(use-package auto-rename-tag
-  :ensure t
-  :hook
-  (tsx-ts-mode . auto-rename-tag-mode))
-
 ;;; ----------------------------------------------------------------------
 ;;; javascrip: js2
 ;;; ----------------------------------------------------------------------
-;;(require 'js2-mode)
-;;(require 'js2-refactor)
-;; (require 'tide)
-;; (require 'add-node-modules-path)
-;; (custom-set-default 'js-indent-level 4)
-;; (custom-set-default 'js2-basic-offset 4)
-;; (js2r-add-keybindings-with-prefix "C-c C-r")
+(use-package js2-mode :ensure t)
 
 ;;;-------------------------------------------------------------------
 ;;; SQL
 ;;;-------------------------------------------------------------------
-;; (use-package sql-indent :ensure t)
-;; (use-package sqlformat
-;;   :ensure t
-;;   :config
-;;   (setq sqlformat-command 'pgformatter
-;; 	  sqlformat-args '("-s2" "-g"))
-;;   :hook (sql-mode . sqlformat-on-save-mode)
-;;   :bind (:map sql-mode-map ("C-c C-f" . sqlformat)))
+(use-package sql-indent :ensure t)
+(use-package sqlformat
+  :ensure t
+  :config
+  (setq sqlformat-command 'pgformatter
+	  sqlformat-args '("-s2" "-g"))
+  :hook (sql-mode . sqlformat-on-save-mode)
+  :bind (:map sql-mode-map ("C-c C-f" . sqlformat)))
 
 ;;;-------------------------------------------------------------------
 ;;; flycheck or flymake
@@ -587,95 +598,57 @@
 	    #b00000000)))
 
 ;;; ----------------------------------------------------------------------
-;;; tree sitter
-;;; ----------------------------------------------------------------------
-(use-package tree-sitter
-  :ensure t
-  :config
-  (global-tree-sitter-mode)
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
-
-(use-package tree-sitter-langs
-  :ensure t
-  :after tree-sitter)
-
-;;; ----------------------------------------------------------------------
 ;;; lsp or eglot?
 ;;; ----------------------------------------------------------------------
-;;(require 'lsp-mode)
-;;(require 'lsp-ui)
-;;(require 'lsp-treemacs)
-;;(lsp-treemacs-sync-mode 1)
-
-(defun eglot-shutdown-project ()
-  "Kill the LSP server for the current project if it exists."
-  (when-let ((server (eglot-current-server)))
-    (ignore-errors (eglot-shutdown server))))
-
-(use-package eglot
-  :ensure nil
+(use-package lsp-mode
   :init
-  (put 'eglot-server-programs 'safe-local-variable 'listp)
-  :hook
-  ;; eglot-ensure
-  (bash-ts-mode . eglot-ensure)
-  (c-mode . eglot-ensure)
-  (cmake-mode . eglot-ensure)
-  (cpp-mode . eglot-ensure)
-  (css-mode . eglot-ensure)
-  (csv-mode . eglot-ensure)
-  (dockerfile-mode . eglot-ensure)
-  (dockerfile-mode . eglot-ensure)
-  (elisp-mode . eglot-ensure)
-  (html-mode . eglot-ensure)
-  (js-ts-mode . eglot-ensure)
-  (json-ts-mode . eglot-ensure)
-  (js-ts-mode . eglot-ensure)
-  (golang-mode . eglot-ensure)
-  (make-mode . eglot-ensure)
-  (markdown-mode . eglot-ensure)
-  (markdown-ts-mode . eglot-ensure)
-  (python-mode . eglot-ensure)
-  (rust-mode . eglot-ensure)
-  (rust-ts-mode . eglot-ensure)
-  (sh-mode . eglot-ensure)
-  (solidity-mode . eglot-ensure)
-  (tsx-ts-mode . eglot-ensure)
-  (typescript-ts-mode . eglot-ensure)
-  (xml-mode . eglot-ensure)
-  (yaml-mode . eglot-ensure)
-  (web-mode . eglot-ensure)
-  (zig-mode . eglot-ensure)
+  (setq lsp-keymap-prefix "C-c l")
+  :ensure t
+  :demand t
+  :hook (
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands (lsp lsp-deferred))
 
-  :bind (:map eglot-mode-map
-	      ("C-c e ." . eglot-code-actions)
-	      ("C-c e r" . eglot-rename)
-	      ("C-c e f" . eglot-format)
-	      ("C-c f n" . flymake-goto-next-error)
-	      ("C-c f p" . flymake-goto-prev-error)
-	      ("C-c f d" . flymake-show-project-diagnostics))
-  :custom
-  (eglot-autoshutdown t)
-  (eglot-menu-string "LSP")
-  (eglot-confirm-server-initiated-edits nil)
-  :config
-  (put 'eglot-error 'flymake-overlay-control nil)
-  (put 'eglot-note 'flymake-overlay-control nil)
-  (put 'eglot-warning 'flymake-overlay-control nil)
-  (advice-add 'eglot--apply-workspace-edit :after #'me/project-save)
-  (advice-add 'project-kill-buffers :before #'me/eglot-shutdown-project)
-  (add-to-list 'eglot-server-programs '((rust-ts-mode rust-mode) . ("rust-analyzer")))
-  (add-to-list 'eglot-server-programs '((markdown-mode markdown-ts-mode) . ("marksman")))
-  (add-to-list 'eglot-server-programs '((sh-mode bash-ts-mode) . ("bash-language-server" "start")))
-  (add-to-list 'eglot-server-programs '((json-mode json-ts-mode) . ("vscode-json-language-server" "start")))
-  (add-to-list 'eglot-server-programs '((rust-ts-mode rust-mode) . ("rust-analyzer")))
-  (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
-  )
+;; optionally if you want to use debugger
+;;(use-package dap-mode
+;;  :ensure t
+;;  :demand t)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-pyright)
+                         (lsp))))  ; or lsp-deferred
+
+
+;; lsp UI
+(use-package lsp-ui
+  :ensure t
+  :demand t
+  :commands lsp-ui-mode)
+
+;;; ---------------------------------------------------------------------
+;;; company
+;;; ----------------------------------------------------------------------
+(use-package company
+      :ensure t
+      :hook (prog-mode . company-mode)
+      :config
+      (setq company-minimum-prefix-length 2)
+      (global-company-mode)
+      (global-set-key (kbd "TAB") #'company-indent-or-complete-common))
+
+(setq company-tooltip-align-annotations t)
+
+(use-package company-box
+  :ensure t
+  :hook (company-mode . company-box-mode))
 
 ;;; ----------------------------------------------------------------------
 ;;; git
 ;;; ----------------------------------------------------------------------
-; (use-package magit :ensure t)
+(use-package magit :ensure t)
 (use-package git-timemachine :ensure t)
 (use-package blamer
   :ensure t
@@ -694,40 +667,39 @@
 ;;; ----------------------------------------------------------------------
 ;;; vertigo
 ;;; ----------------------------------------------------------------------
-;; (use-package vertico
-;;   :ensure t
-;;   :init
-;;   (vertico-mode)
+(use-package vertico
+  :ensure t
+  :init
+  (vertico-mode)
 
-;;   (setq vertico-scoll-margin 0)
-;;   (setq vertico-vertical-count 14)
-;;   (setq vertico-cycle t)
+  (setq vertico-scoll-margin 0)
+  (setq vertico-vertical-count 14)
+  (setq vertico-cycle t)
 
-;;   ; :custom
-;;   ; (vertico-group-separator ((t (:inherit all-the-icons-dorange :strike-through t))))
-;;   ; (vertico-group-title ((t (:inherit all-the-icons-dorange :slant italic))))
-;;   )
+  :custom
+  (vertico-group-separator ((t (:inherit all-the-icons-dorange :strike-through t))))
+  (vertico-group-title ((t (:inherit all-the-icons-dorange :slant italic)))))
 
 (use-package savehist
   :init
   (savehist-mode))
 
-;; (use-package orderless
-;;   :ensure t
-;;   :custom
-;;   (completion-styles '(orderless basic))
-;;   (completion-category-overrides '((file (styles basic partial-completion)))))
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
 
 ;;; ----------------------------------------------------------------------
 ;;; theme for markdown
 ;;; ----------------------------------------------------------------------
-;; (use-package olivetti
-;;   :ensure t
-;;   :custom
-;;   (olivetti-body-width 120)
-;;   :config
-;;   :hook ((markdown-mode . olivetti-mode)
-;; 	 (org-mode . olivetti-mode)))
+(use-package olivetti
+  :ensure t
+  :custom
+  (olivetti-body-width 120)
+  :config
+  :hook ((markdown-mode . olivetti-mode)
+	 (org-mode . olivetti-mode)))
 
 ;;; ----------------------------------------------------------------------
 ;;; which-key
@@ -757,34 +729,34 @@
 ;;; ----------------------------------------------------------------------
 ;;; projectile
 ;;; ----------------------------------------------------------------------
-;; (use-package projectile
-;;   :ensure t
-;;   :init
-;;   (projectile-mode +1)
-;;   :bind (
-;; 	   ("M-[" . projectile-previous-project-buffer)
-;; 	   ("M-]" . projectile-next-project-buffer))
-;;   :config
-;;   (setq projectile-indexing-method 'hybrid
-;; 	projectile-sort-order 'recently-active
-;; 	compilation-read-command nil
-;; 	projectile-comint-mode t)
+(use-package projectile
+  :ensure t
+  :init
+  (projectile-mode +1)
+  :bind (
+	   ("M-[" . projectile-previous-project-buffer)
+	   ("M-]" . projectile-next-project-buffer))
+  :config
+  (setq projectile-indexing-method 'hybrid
+	projectile-sort-order 'recently-active
+	compilation-read-command nil
+	projectile-comint-mode t)
 
-;;   (add-to-list 'projectile-globally-ignored-directories "node_modules")
-;;   (add-to-list 'projectile-globally-ignored-directories "venv")
+  (add-to-list 'projectile-globally-ignored-directories "node_modules")
+  (add-to-list 'projectile-globally-ignored-directories "venv")
 
-;;   :custom
-;;   (projectile-globally-ignored-buffers '("*scratch*" "*lsp-log*" "*xref*" "*EGLOT" "*Messages*" "*compilation" "*vterm*" "*Flymake")))
+  :custom
+  (projectile-globally-ignored-buffers '("*scratch*" "*lsp-log*" "*xref*" "*EGLOT" "*Messages*" "*compilation" "*vterm*" "*Flymake")))
 
 ;;; ----------------------------------------------------------------------
 ;;; consult
 ;;; ----------------------------------------------------------------------
-;; (use-package consult
-;;   :ensure t
-;;   :bind ("C-s" . consult-line)
-;;   :init
-;;   (autoload 'projectile-project-root "~/src")
-;;   )
+(use-package consult
+  :ensure t
+  ;; :bind ("C-s" . consult-line)
+  :init
+  (autoload 'projectile-project-root "~/src")
+  )
 
 ;;; ----------------------------------------------------------------------
 ;;; dashboard
@@ -811,28 +783,6 @@
 ;;; ----------------------------------------------------------------------
 ;;; compile
 ;;; ----------------------------------------------------------------------
-(use-package compile
-  :ensure nil
-  :custom
-  (compilation-scroll-output 'first-error)
-  (compilation-always-kill t)
-  (compilation-max-output-line-length nil)
-  :hook (compilation-mode . hl-line-mode)
-  :init
-
-  (add-hook 'compilation-finish-functions
-	    (lambda
-	      (buf str)
-              (if (null (string-match ".*exited abnormally.*" str))
-	          ;;no errors, make the compilation
-		  window go away in a few seconds
-                  (progn
-		    (run-at-time
-		     "1 sec" nil 'delete-windows-on
-
-		     (get-buffer-create "*compilation*"))
-                    (message "No Compilation Errors!"))))))
-
 (use-package fancy-compilation
   :ensure t
   :defer 3
@@ -855,11 +805,6 @@
       '("https://www.audiosciencereview.com/forum/index.php?reviews/index.rss"
 	"https://www.audiosciencereview.com/forum/index.php?forums/speaker-reviews-measurements-and-discussion.54/index.rss"
 	))
-
-;;;-------------------------------------------------------------------
-;;; Lisp code not managed by elpaca
-;;;-------------------------------------------------------------------
-(add-to-list 'load-path "~/src/workbench/emacs.d/share")
 
 ;;; ----------------------------------------------------------------------
 ;;; custom
