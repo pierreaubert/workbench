@@ -211,106 +211,42 @@
 ;;; -------------------------------------------------------------------
 ;;;  global settings
 ;;; -------------------------------------------------------------------
+(setq inhibit-startup-message t)
+(setq line-number-mode t)
+(setq column-number-mode t)
+(global-font-lock-mode t)
+(setq-default transient-mark-mode t)
+(show-paren-mode t)                     ; show matching parentheses
+(setq scroll-step 1)
 (menu-bar-mode 0)
 (tool-bar-mode 0)
 (column-number-mode)
 (setq ring-bell-function 'ignore)
-(defalias 'yes-or-no-p 'y-or-n-p)
-(setq use-dialog-box nil)
 (setq native-comp-async-report-warnings-errors nil)
 
 ;;; -------------------------------------------------------------------
 ;;  global keys
 ;;; -------------------------------------------------------------------
 (global-set-key (kbd "M-g") 'goto-line)
-(global-set-key (kbd "C-c c") 'comment-region)
-(global-set-key (kbd "C-c d") 'uncomment-region)
+(global-set-key (kbd "C-x C-b") 'electric-buffer-list)
+(global-set-key (kbd "C-c C-c") 'comment-region)
+(global-set-key (kbd "C-c C-d") 'uncomment-region)
 
 (global-set-key (kbd "<f7>") (lambda() (interactive)(load-theme "tango-light")))
 (global-set-key (kbd "<f8>") (lambda() (interactive)(load-theme "tango-dark")))
 (global-set-key (kbd "<f12>") (lambda() (interactive)(next-error)))
 
-;;;  -------------------------------------------------------------------
-;;   MacOS
-;;;  -------------------------------------------------------------------
-(when (eq system-type 'darwin)
-  (add-to-list 'default-frame-alist '(undecorated . t))
-  ;; option super meta
-  ;(setq mac-option-modifier 'super)
-  (setq mac-command-modifier 'super)
-  ;(setq mac-right-option-modifier 'none)
+;; ;;;-------------------------------------------------------------------
+;; ;;; modern times
+;; ;;;-------------------------------------------------------------------
 
-  (global-set-key [kp-delete]       'delete-char)
-  (global-set-key (kbd "s-c")       'kill-ring-save)
-  (global-set-key (kbd "s-v")       'yank)
-  (global-set-key (kbd "s-x")       'kill-region)
-  (global-set-key (kbd "s-a")       'mark-whole-buffer)
-  (global-set-key (kbd "s-z")       'undo)
-  (global-set-key (kbd "s-f")       'isearch-forward)
-  (global-set-key (kbd "s-g")       'isearch-repeat-forward)
-  (global-set-key (kbd "s-o")       'find-file)
-  (global-set-key (kbd "s-o")       'mac-open-file)
-  (global-set-key (kbd "s-n")       'find-file)
-  (global-set-key (kbd "s-s")       'save-buffer)
-  (global-set-key (kbd "s-S")       'mac-save-file-as)
-  (global-set-key (kbd "s-w")       'kill-buffer)
-  (global-set-key (kbd "s-q")       'save-buffers-kill-emacs)
-  (global-set-key (kbd "s-l")       'goto-line)
-  (global-set-key (kbd "s-k")       'kill-buffer)
-  (global-set-key (kbd "s-<up>")    'beginning-of-buffer)
-  (global-set-key (kbd "s-<down>")  'end-of-buffer)
-  (global-set-key (kbd "s-<left>")  'beginning-of-line)
-  (global-set-key (kbd "s-<right>") 'end-of-line)
-  (global-set-key [(meta down)]     'forward-paragraph)
-  (global-set-key [(meta up)]       'backward-paragraph)
-
-  ;; Enable mac option to create accented characters
-  (setq ns-left-alternate-modifier 'none)
-  (setq ns-alternate-modifier 'none)
-  (setq frame-resize-pixelwise t)
-
-)
-
-;;;-------------------------------------------------------------------
-;;; modern times
-;;;-------------------------------------------------------------------
 ;; cleanup before loading a new theme
 (defadvice load-theme (before clear-previous-themes activate)
   "Clear existing theme settings instead of layering them"
   (mapc #'disable-theme custom-enabled-themes))
 
-;; use icons
-(use-package all-the-icons
-  :ensure t
-  :demand t
-  :if (display-graphic-p))
-
-(use-package all-the-icons-dired
-  :ensure t
-  :demand t
-  :if (display-graphic-p)
-  :hook (dired-mode . all-the-icons-dired-mode))
-
-;; more icons
-;; (use-package nerd-icons)
-;;(use-package nerd-icons-dired
-;;  :hook
-;;  (dired-mode . nerd-icons-dired-mode))
-
-;; emoji
-(use-package emojify
-  :ensure t
-  :demand t
-  :hook (elpaca-after-init . global-emojify-mode))
-
-;; dimmer (for the night)
-;;(use-package dimmer
-;;  :ensure t
-;;  :init
-;;  (dimmer-mode t)
-;;  :config
-;;  (setq dimmer-fraction 0.9))
-
+(use-package dracula-theme  :ensure t)
+(use-package tango-dark-theme  :ensure t)
 
 ;;; ----------------------------------------------------------------------
 ;;; snippets
@@ -325,7 +261,6 @@
 ;;;-------------------------------------------------------------------
 ;;; coding
 ;;;-------------------------------------------------------------------
-;; all code is utf-8
 (set-language-environment "UTF-8")
 
 ;; Complain about trailing white spaces
@@ -350,18 +285,19 @@
   :demand t
   :ensure t)
 
-(use-package string-inflection
-  :ensure t
-  :demand t
-  :bind ("C-c i" . string-inflection-cycle))
+;; camelcase and other combinaison
+;; (use-package string-inflection
+;;   :ensure t
+;;   :demand t
+;;   :bind ("C-c i" . string-inflection-cycle))
 
 (global-hl-line-mode t)
 
-;; always add line numbers
+;; ;; always add line numbers
 (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 (add-hook 'conf-mode-hook #'display-line-numbers-mode)
 
-;; indentation
+;; ;; indentation
 (use-package highlight-indent-guides
   :ensure t
   :demand t
@@ -371,9 +307,7 @@
 ;;;-------------------------------------------------------------------
 ;;; autocomplete for python & others
 ;;;-------------------------------------------------------------------
-(use-package auto-complete
-  :ensure t
-  :demand t)
+(use-package auto-complete :ensure t :demand t)
 ;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 ;; (ac-config-default)
 
@@ -382,17 +316,6 @@
 ;;;-------------------------------------------------------------------
 ;; (use-package cperl-mode  :ensure t)
 ;; (setq cperl-hairy t)
-
-;;;-------------------------------------------------------------------
-;;; markdown and grip
-;;;-------------------------------------------------------------------
-(use-package markdown-mode
-  :ensure t
-  :demand t)
-(use-package grip-mode
-  :ensure t
-  :demand t)
-(add-hook 'markdown-mode-hook #'grip-mode)
 
 ;;;-------------------------------------------------------------------
 ;;; Misc-Modes
@@ -509,23 +432,23 @@
 ;;;-------------------------------------------------------------------
 ;;; Web-Mode
 ;;;-------------------------------------------------------------------
-(use-package web-mode
-  :ensure t
-  :mode (("\\.html?\\'" . web-mode))
-  :config
-  (setq web-mode-markup-indent-offset 2
-	web-mode-enable-auto-indentation nil
-	web-mode-css-indent-offset 2
-	web-mode-code-indent-offset 2
-	web-mode-block-padding 2
-	web-mode-comment-style 2
-	web-mode-enable-css-colorization t
-	web-mode-enable-auto-pairing t
-	web-mode-enable-comment-keywords t
-	web-mode-enable-current-element-highlight t
-	web-mode-enable-current-column-highlight t
-	web-mode-content-types-alist  '(("django" . "\\.tpl\\'")))
-  :hook (web-mode . auto-rename-tag-mode))
+;; (use-package web-mode
+;;   :ensure t
+;;   :mode (("\\.html?\\'" . web-mode))
+;;   :config
+;;   (setq web-mode-markup-indent-offset 2
+;; 	web-mode-enable-auto-indentation nil
+;; 	web-mode-css-indent-offset 2
+;; 	web-mode-code-indent-offset 2
+;; 	web-mode-block-padding 2
+;; 	web-mode-comment-style 2
+;; 	web-mode-enable-css-colorization t
+;; 	web-mode-enable-auto-pairing t
+;; 	web-mode-enable-comment-keywords t
+;; 	web-mode-enable-current-element-highlight t
+;; 	web-mode-enable-current-column-highlight t
+;; 	web-mode-content-types-alist  '(("django" . "\\.tpl\\'")))
+;;   :hook (web-mode . auto-rename-tag-mode))
 
 ;;; ----------------------------------------------------------------------
 ;;; javascrip: js2
@@ -547,8 +470,8 @@
 ;;;-------------------------------------------------------------------
 ;;; flycheck or flymake
 ;;;-------------------------------------------------------------------
-;(defvar my-excluded-directory-regexps
-;  '("datas/"))
+(defvar my-excluded-directory-regexps
+  '("datas/"))
 
 ;(defun my-flycheck-may-check-automatically (&rest _conditions)
 ;  (or (null buffer-file-name)
@@ -561,41 +484,31 @@
 ;(advice-add 'flycheck-may-check-automatically
 ;            :after-while #'my-flycheck-may-check-automatically)
 
-;(flycheck-mode +1)
+; (flycheck-mode +1)
 
 (use-package sideline-flymake
   :ensure t
   :hook (flymake-mode . sideline-mode)
-  :custom
-  (flymake-error-bitmap '(my-rounded-fringe-indicator compilation-error))
-  (flymake-note-bitmap '(my-rounded-fringe-indicator compilation-info))
-  (flymake-warning-bitmap '(my-rounded-fringe-indicator compilation-warning))
   :init
   (setq sideline-flymake-display-errors-whole-line
 	'point
 	sideline-backends-right '(sideline-flymake)))
 
-(when (fboundp 'define-fringe-bitmap)
-  (define-fringe-bitmap 'my-rounded-fringe-indicator
-    (vector #b00000000
-            #b00000000
-	    #b00000000
-	    #b00000000
-	    #b00000000
-	    #b00000000
+(use-package flymake-eslint
+  :ensure t
+  :functions flymake-eslint-enable
+  :preface
+  (defun flymake-eslint-enable-maybe ()
+    "Enable flymake-eslint based on the project configuration.
+ Search for the project ESLint configuration to determine whether the buffer
+ should be checked."
+    (when-let* ((root (locate-dominating-file (buffer-file-name) "package.json"))
+		(rc (locate-file ".eslintrc" (list root) '(".js" ".json"))))
+      (make-local-variable 'exec-path)
+      (push (file-name-concat root "node_modules" ".bin") exec-path)
+      (setq-local flymake-eslint-project-root root)
+      (flymake-eslint-enable))))
 
-	    #b00000000
-            #b00011100
-	    #b00111110
-	    #b00111110
-	    #b00111110
-	    #b00011100
-
-	    #b00000000
-            #b00000000
-	    #b00000000
-	    #b00000000
-	    #b00000000)))
 
 ;;; ----------------------------------------------------------------------
 ;;; lsp or eglot?
@@ -636,8 +549,8 @@
       :hook (prog-mode . company-mode)
       :config
       (setq company-minimum-prefix-length 2)
-      (global-company-mode)
-      (global-set-key (kbd "TAB") #'company-indent-or-complete-common))
+      ;; (global-company-mode)
+      (global-set-key (kbd "C-TAB") #'company-indent-or-complete-common))
 
 (setq company-tooltip-align-annotations t)
 
@@ -667,39 +580,39 @@
 ;;; ----------------------------------------------------------------------
 ;;; vertigo
 ;;; ----------------------------------------------------------------------
-(use-package vertico
-  :ensure t
-  :init
-  (vertico-mode)
+;; (use-package vertico
+;;   :ensure t
+;;   :init
+;;   (vertico-mode)
 
-  (setq vertico-scoll-margin 0)
-  (setq vertico-vertical-count 14)
-  (setq vertico-cycle t)
+;;   (setq vertico-scoll-margin 0)
+;;   (setq vertico-vertical-count 14)
+;;   (setq vertico-cycle t))
 
-  :custom
-  (vertico-group-separator ((t (:inherit all-the-icons-dorange :strike-through t))))
-  (vertico-group-title ((t (:inherit all-the-icons-dorange :slant italic)))))
 
 (use-package savehist
   :init
   (savehist-mode))
 
-(use-package orderless
+;;;-------------------------------------------------------------------
+;;; markdown and grip
+;;;-------------------------------------------------------------------
+(use-package markdown-mode
   :ensure t
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles basic partial-completion)))))
+  :demand t)
 
-;;; ----------------------------------------------------------------------
-;;; theme for markdown
-;;; ----------------------------------------------------------------------
-(use-package olivetti
-  :ensure t
-  :custom
-  (olivetti-body-width 120)
-  :config
-  :hook ((markdown-mode . olivetti-mode)
-	 (org-mode . olivetti-mode)))
+;; (use-package grip-mode
+;;   :ensure t
+;;   :demand t)
+;; (add-hook 'markdown-mode-hook #'grip-mode)
+
+;; (use-package olivetti
+;;   :ensure t
+;;   :custom
+;;   (olivetti-body-width 120)
+;;   :config
+;;   :hook ((markdown-mode . olivetti-mode)
+;; 	 (org-mode . olivetti-mode)))
 
 ;;; ----------------------------------------------------------------------
 ;;; which-key
@@ -733,14 +646,15 @@
   :ensure t
   :init
   (projectile-mode +1)
-  :bind (
-	   ("M-[" . projectile-previous-project-buffer)
-	   ("M-]" . projectile-next-project-buffer))
+  :bind (:map projectile-mode-map
+              ("s-p" . projectile-command-map)
+              ("C-c p" . projectile-command-map))
   :config
   (setq projectile-indexing-method 'hybrid
 	projectile-sort-order 'recently-active
 	compilation-read-command nil
-	projectile-comint-mode t)
+	projectile-comint-mode t
+	projectile-project-search-path '("~/src/"))
 
   (add-to-list 'projectile-globally-ignored-directories "node_modules")
   (add-to-list 'projectile-globally-ignored-directories "venv")
@@ -758,27 +672,33 @@
   (autoload 'projectile-project-root "~/src")
   )
 
+;; (use-package orderless
+;;   :ensure t
+;;   :custom
+;;   (completion-styles '(orderless basic))
+;;   (completion-category-overrides '((file (styles basic partial-completion)))))
+
 ;;; ----------------------------------------------------------------------
 ;;; dashboard
 ;;; ----------------------------------------------------------------------
-;; (use-package dashboard
-;;   :ensure t
-;;   :config
-;;   (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
-;;   (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
-;;   (dashboard-setup-startup-hook))
+(use-package dashboard
+  :ensure t
+  :config
+  (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
+  (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
+  (dashboard-setup-startup-hook))
 
-;; ;; Set the title
-;; (setq dashboard-banner-logo-title "Bonjour Pierre")
-;; ;; Set the banner
-;; (setq dashboard-startup-banner "~/src/workbench/emacs.d/polkadot.txt")
-;; (setq dashboard-center-content t)
-;; (setq dashboard-vertically-center-content t)
-;; (setq dashboard-items '((recents   . 10)
-;; 			(projects  . 10)))
-;; (setq dashboard-icon-type 'all-the-icons)
-;; (setq dashboard-set-heading-icons t)
-;; (setq dashboard-set-file-icons t)
+;; Set the title
+(setq dashboard-banner-logo-title "Bonjour Pierre")
+;; Set the banner
+(setq dashboard-startup-banner "~/src/workbench/emacs.d/polkadot.txt")
+(setq dashboard-center-content t)
+(setq dashboard-vertically-center-content t)
+(setq dashboard-items '((recents   . 10)
+			(projects  . 10)))
+(setq dashboard-icon-type 'all-the-icons)
+(setq dashboard-set-heading-icons t)
+(setq dashboard-set-file-icons t)
 
 ;;; ----------------------------------------------------------------------
 ;;; compile
@@ -809,3 +729,17 @@
 ;;; ----------------------------------------------------------------------
 ;;; custom
 ;;; ----------------------------------------------------------------------
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("603a831e0f2e466480cdc633ba37a0b1ae3c3e9a4e90183833bc4def3421a961"
+     default)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

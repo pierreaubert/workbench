@@ -11,7 +11,7 @@ Assumption you use emacs29.
 
 ** lsp
 
-I use eglot.
+I use lsp and not eglot.
 
 Some lsp servers are installed via npm
 ```
