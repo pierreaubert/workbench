@@ -1,5 +1,6 @@
 ;;; paub-init --- initialisation for .emacs -*- emacs-lisp -*-
 ;;; Commentary:
+;;;  17 Jun 24 :  fix completion
 ;;;  01 Jun 24 :  add some custom conf for macOS
 ;;;            +  switch to elpaca to install packages
 ;;;            +  merged LSP servers into lsp directory
@@ -149,6 +150,7 @@
 
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 160 1000 1000))
+(setq read-process-output-max (* 1024 1024))
 
 ;;;-------------------------------------------------------------------
 ;;; package manager
@@ -246,7 +248,7 @@
   (mapc #'disable-theme custom-enabled-themes))
 
 (use-package dracula-theme  :ensure t)
-(use-package tango-dark-theme  :ensure t)
+;; (use-package tango-dark-theme  :ensure t)
 
 ;;; ----------------------------------------------------------------------
 ;;; snippets
@@ -432,23 +434,23 @@
 ;;;-------------------------------------------------------------------
 ;;; Web-Mode
 ;;;-------------------------------------------------------------------
-;; (use-package web-mode
-;;   :ensure t
-;;   :mode (("\\.html?\\'" . web-mode))
-;;   :config
-;;   (setq web-mode-markup-indent-offset 2
-;; 	web-mode-enable-auto-indentation nil
-;; 	web-mode-css-indent-offset 2
-;; 	web-mode-code-indent-offset 2
-;; 	web-mode-block-padding 2
-;; 	web-mode-comment-style 2
-;; 	web-mode-enable-css-colorization t
-;; 	web-mode-enable-auto-pairing t
-;; 	web-mode-enable-comment-keywords t
-;; 	web-mode-enable-current-element-highlight t
-;; 	web-mode-enable-current-column-highlight t
-;; 	web-mode-content-types-alist  '(("django" . "\\.tpl\\'")))
-;;   :hook (web-mode . auto-rename-tag-mode))
+(use-package web-mode
+  :ensure t
+  :mode (("\\.html?\\'" . web-mode))
+  :config
+  (setq web-mode-markup-indent-offset 2
+	web-mode-enable-auto-indentation nil
+	web-mode-css-indent-offset 2
+	web-mode-code-indent-offset 2
+	web-mode-block-padding 2
+	web-mode-comment-style 2
+	web-mode-enable-css-colorization t
+	web-mode-enable-auto-pairing t
+	web-mode-enable-comment-keywords t
+	web-mode-enable-current-element-highlight t
+	web-mode-enable-current-column-highlight t
+	web-mode-content-types-alist  '(("django" . "\\.tpl\\'")))
+  :hook (web-mode . auto-rename-tag-mode))
 
 ;;; ----------------------------------------------------------------------
 ;;; javascrip: js2
@@ -530,6 +532,8 @@
 
 (use-package lsp-pyright
   :ensure t
+  :init
+  (setq lsp-pyright-multi-root nil)
   :hook (python-mode . (lambda ()
                          (require 'lsp-pyright)
                          (lsp))))  ; or lsp-deferred
@@ -540,6 +544,15 @@
   :ensure t
   :demand t
   :commands lsp-ui-mode)
+
+(with-eval-after-load 'lsp-mode
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\measurements\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.venv\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\venv\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.cache\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\docs\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\build\\'")
+  )
 
 ;;; ---------------------------------------------------------------------
 ;;; company
@@ -577,19 +590,10 @@
 		   :height .9
 		   :italic t))))
 
+
 ;;; ----------------------------------------------------------------------
-;;; vertigo
+;;; save history
 ;;; ----------------------------------------------------------------------
-;; (use-package vertico
-;;   :ensure t
-;;   :init
-;;   (vertico-mode)
-
-;;   (setq vertico-scoll-margin 0)
-;;   (setq vertico-vertical-count 14)
-;;   (setq vertico-cycle t))
-
-
 (use-package savehist
   :init
   (savehist-mode))
@@ -663,20 +667,30 @@
   (projectile-globally-ignored-buffers '("*scratch*" "*lsp-log*" "*xref*" "*EGLOT" "*Messages*" "*compilation" "*vterm*" "*Flymake")))
 
 ;;; ----------------------------------------------------------------------
-;;; consult
+;;; completion section
 ;;; ----------------------------------------------------------------------
+(use-package vertico
+  :ensure t
+  :init
+  (vertico-mode 1)
+  (require 'vertico-directory)
+  (setq vertico-scoll-margin 0)
+  (setq vertico-vertical-count 14)
+  (setq vertico-cycle t))
+
 (use-package consult
   :ensure t
-  ;; :bind ("C-s" . consult-line)
+  :bind
+  ("C-s" . consult-line)
   :init
   (autoload 'projectile-project-root "~/src")
   )
 
-;; (use-package orderless
-;;   :ensure t
-;;   :custom
-;;   (completion-styles '(orderless basic))
-;;   (completion-category-overrides '((file (styles basic partial-completion)))))
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
 
 ;;; ----------------------------------------------------------------------
 ;;; dashboard
