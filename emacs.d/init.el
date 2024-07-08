@@ -1,5 +1,6 @@
 ;;; paub-init --- initialisation for .emacs -*- emacs-lisp -*-
 ;;; Commentary:
+;;;  08 Jul 24 :  remove a lot of goodies
 ;;;  17 Jun 24 :  fix completion
 ;;;  01 Jun 24 :  add some custom conf for macOS
 ;;;            +  switch to elpaca to install packages
@@ -247,8 +248,8 @@
   "Clear existing theme settings instead of layering them"
   (mapc #'disable-theme custom-enabled-themes))
 
-(use-package dracula-theme  :ensure t)
-;; (use-package tango-dark-theme  :ensure t)
+;; (use-package dracula-theme  :ensure t)
+;; (use-package tango-theme  :ensure t)
 
 ;;; ----------------------------------------------------------------------
 ;;; snippets
@@ -272,20 +273,20 @@
 ;; Cleanup whitespace before save
 (add-hook 'before-save-hook 'whitespace-cleanup)
 
-(use-package smartparens
-  :ensure t
-  :demand t
-  :config
-  (smartparens-global-mode t))
+;; (use-package smartparens
+;;   :ensure t
+;;   :demand t
+;;   :config
+;;   (smartparens-global-mode t))
 
-(use-package rainbow-delimiters
-  :ensure t
-  :demand t
-  :hook (prog-mode . rainbow-delimiters-mode))
+;; (use-package rainbow-delimiters
+;;   :ensure t
+;;   :demand t
+;;   :hook (prog-mode . rainbow-delimiters-mode))
 
-(use-package rainbow-mode
-  :demand t
-  :ensure t)
+;; (use-package rainbow-mode
+;;   :demand t
+;;   :ensure t)
 
 ;; camelcase and other combinaison
 ;; (use-package string-inflection
@@ -629,14 +630,14 @@
 ;;; ----------------------------------------------------------------------
 ;;; LLM
 ;;; ----------------------------------------------------------------------
-(use-package ellama
-  :ensure t
-  :config
-  (setopt ellama-language "English")
-  (require 'llm-ollama)
-  (setopt ellama-provider
-                  (make-llm-ollama
-                   :chat-model "mistral" :embedding-model "mistral")))
+;; (use-package ellama
+;;   :ensure t
+;;   :config
+;;   (setopt ellama-language "English")
+;;   (require 'llm-ollama)
+;;   (setopt ellama-provider
+;;                   (make-llm-ollama
+;;                   :chat-model "mistral" :embedding-model "mistral")))
 
 ;;(use-package elisa
 ;;  :ensure (elisa
@@ -644,30 +645,30 @@
 ;;           :repo "s-kostyaev/elisa"))
 
 ;;; ----------------------------------------------------------------------
-;;; projectile
+;;; projectile: not doing a lot for me
 ;;; ----------------------------------------------------------------------
-(use-package projectile
-  :ensure t
-  :init
-  (projectile-mode +1)
-  :bind (:map projectile-mode-map
-              ("s-p" . projectile-command-map)
-              ("C-c p" . projectile-command-map))
-  :config
-  (setq projectile-indexing-method 'hybrid
-	projectile-sort-order 'recently-active
-	compilation-read-command nil
-	projectile-comint-mode t
-	projectile-project-search-path '("~/src/"))
+;; (use-package projectile
+;;   :ensure t
+;;   :init
+;;   (projectile-mode +1)
+;;   :bind (:map projectile-mode-map
+;;               ("s-p" . projectile-command-map)
+;;               ("C-c p" . projectile-command-map))
+;;   :config
+;;   (setq projectile-indexing-method 'hybrid
+;; 	projectile-sort-order 'recently-active
+;; 	compilation-read-command nil
+;; 	projectile-comint-mode t
+;; 	projectile-project-search-path '("~/src/" "/work/polkadot"))
 
-  (add-to-list 'projectile-globally-ignored-directories "node_modules")
-  (add-to-list 'projectile-globally-ignored-directories "venv")
+;;   (add-to-list 'projectile-globally-ignored-directories "node_modules")
+;;   (add-to-list 'projectile-globally-ignored-directories "venv")
 
-  :custom
-  (projectile-globally-ignored-buffers '("*scratch*" "*lsp-log*" "*xref*" "*EGLOT" "*Messages*" "*compilation" "*vterm*" "*Flymake")))
+;;   :custom
+;;   (projectile-globally-ignored-buffers '("*scratch*" "*lsp-log*" "*xref*" "*EGLOT" "*Messages*" "*compilation" "*vterm*" "*Flymake")))
 
 ;;; ----------------------------------------------------------------------
-;;; completion section
+;;; completion section: someday I like it but that's too different from the standard emacs
 ;;; ----------------------------------------------------------------------
 (use-package vertico
   :ensure t
@@ -681,7 +682,7 @@
 (use-package consult
   :ensure t
   :bind
-  ("C-s" . consult-line)
+  ("S-C-s" . consult-line)
   :init
   (autoload 'projectile-project-root "~/src")
   )
@@ -693,7 +694,7 @@
   (completion-category-overrides '((file (styles basic partial-completion)))))
 
 ;;; ----------------------------------------------------------------------
-;;; dashboard
+;;; dashboard: nice to have but could be removed
 ;;; ----------------------------------------------------------------------
 (use-package dashboard
   :ensure t
@@ -715,30 +716,31 @@
 (setq dashboard-set-file-icons t)
 
 ;;; ----------------------------------------------------------------------
-;;; compile
+;;; compile: not too bad
 ;;; ----------------------------------------------------------------------
-(use-package fancy-compilation
-  :ensure t
-  :defer 3
-  :config
-  (fancy-compilation-mode)
-  :custom
-  (fancy-compilation-scroll-output 'first-error))
+;; (use-package fancy-compilation
+;;   :ensure t
+;;   :defer 3
+;;   :config
+;;   (fancy-compilation-mode)
+;;   :custom
+;;   (fancy-compilation-scroll-output 'first-error))
 
+;; ;
+;; ----------------------------------------------------------------------
+;;; elfeed: not that useful, gnus is better
 ;;; ----------------------------------------------------------------------
-;;; elfeed
-;;; ----------------------------------------------------------------------
-(use-package elfeed
-  :ensure t
-  :custom
-  (elfeed-db-directory
-   (expand-file-name "elfeed" user-emacs-directory))
-  (elfeed-show-entry-switch 'display-buffer))
+;; (use-package elfeed
+;;   :ensure t
+;;   :custom
+;;   (elfeed-db-directory
+;;    (expand-file-name "elfeed" user-emacs-directory))
+;;   (elfeed-show-entry-switch 'display-buffer))
 
-(setq elfeed-feeds
-      '("https://www.audiosciencereview.com/forum/index.php?reviews/index.rss"
-	"https://www.audiosciencereview.com/forum/index.php?forums/speaker-reviews-measurements-and-discussion.54/index.rss"
-	))
+;; (setq elfeed-feeds
+;;       '("https://www.audiosciencereview.com/forum/index.php?reviews/index.rss"
+;; 	"https://www.audiosciencereview.com/forum/index.php?forums/speaker-reviews-measurements-and-discussion.54/index.rss"
+;; 	))
 
 ;;; ----------------------------------------------------------------------
 ;;; custom
@@ -749,8 +751,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("603a831e0f2e466480cdc633ba37a0b1ae3c3e9a4e90183833bc4def3421a961"
-     default)))
+   '("dcb1cc804b9adca583e4e65755895ba0a66ef82d29464cf89a78b88ddac6ca53" "603a831e0f2e466480cdc633ba37a0b1ae3c3e9a4e90183833bc4def3421a961" default)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
