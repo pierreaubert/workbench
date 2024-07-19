@@ -254,12 +254,12 @@
 ;;; ----------------------------------------------------------------------
 ;;; snippets
 ;;; ----------------------------------------------------------------------
-(use-package yasnippet
-  :ensure t
-  :init
-  :config
-  (yas-load-directory "~/src/workbench/emacs.d/snippets")
-  (yas-global-mode 1))
+;; (use-package yasnippet
+;;   :ensure t
+;;   :init
+;;   :config
+;;   (yas-load-directory "~/src/workbench/emacs.d/snippets")
+;;   (yas-global-mode 1))
 
 ;;;-------------------------------------------------------------------
 ;;; coding
@@ -696,24 +696,24 @@
 ;;; ----------------------------------------------------------------------
 ;;; dashboard: nice to have but could be removed
 ;;; ----------------------------------------------------------------------
-(use-package dashboard
-  :ensure t
-  :config
-  (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
-  (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
-  (dashboard-setup-startup-hook))
+;; (use-package dashboard
+;;   :ensure t
+;;   :config
+;;   (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
+;;   (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
+;;   (dashboard-setup-startup-hook))
 
-;; Set the title
-(setq dashboard-banner-logo-title "Bonjour Pierre")
-;; Set the banner
-(setq dashboard-startup-banner "~/src/workbench/emacs.d/polkadot.txt")
-(setq dashboard-center-content t)
-(setq dashboard-vertically-center-content t)
-(setq dashboard-items '((recents   . 10)
-			(projects  . 10)))
-(setq dashboard-icon-type 'all-the-icons)
-(setq dashboard-set-heading-icons t)
-(setq dashboard-set-file-icons t)
+;; ;; Set the title
+;; (setq dashboard-banner-logo-title "Bonjour Pierre")
+;; ;; Set the banner
+;; (setq dashboard-startup-banner "~/src/workbench/emacs.d/polkadot.txt")
+;; (setq dashboard-center-content t)
+;; (setq dashboard-vertically-center-content t)
+;; (setq dashboard-items '((recents   . 10)
+;; 			(projects  . 10)))
+;; (setq dashboard-icon-type 'all-the-icons)
+;; (setq dashboard-set-heading-icons t)
+;; (setq dashboard-set-file-icons t)
 
 ;;; ----------------------------------------------------------------------
 ;;; compile: not too bad
