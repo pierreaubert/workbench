@@ -1,5 +1,6 @@
 ;;; paub-init --- initialisation for .emacs -*- emacs-lisp -*-
 ;;; Commentary:
+;;;  12 Sep 24 :  enable ollama with full config
 ;;;  08 Jul 24 :  remove a lot of goodies
 ;;;  17 Jun 24 :  fix completion
 ;;;  01 Jun 24 :  add some custom conf for macOS
@@ -156,15 +157,14 @@
 ;;;-------------------------------------------------------------------
 ;;; package manager
 ;;;-------------------------------------------------------------------
-(setq package-enable-at-startup nil)
 (defvar elpaca-installer-version 0.7)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-			      :ref nil
-			      :files (:defaults "elpaca-test.el" (:exclude "extensions"))
-			      :build (:not elpaca--activate-package)))
+                              :ref nil :depth 1
+                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                              :build (:not elpaca--activate-package)))
 (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
        (build (expand-file-name "elpaca/" elpaca-builds-directory))
        (order (cdr elpaca-order))
@@ -174,18 +174,20 @@
     (make-directory repo t)
     (when (< emacs-major-version 28) (require 'subr-x))
     (condition-case-unless-debug err
-	(if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-		 ((zerop (call-process "git" nil buffer t "clone"
-				       (plist-get order :repo) repo)))
-		 ((zerop (call-process "git" nil buffer t "checkout"
-				       (or (plist-get order :ref) "--"))))
-		 (emacs (concat invocation-directory invocation-name))
-		 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-				       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-		 ((require 'elpaca))
-		 ((elpaca-generate-autoloads "elpaca" repo)))
-	    (progn (message "%s" (buffer-string)) (kill-buffer buffer))
-	  (error "%s" (with-current-buffer buffer (buffer-string))))
+        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                 ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                 ,@(when-let ((depth (plist-get order :depth)))
+                                                     (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                 ,(plist-get order :repo) ,repo))))
+                 ((zerop (call-process "git" nil buffer t "checkout"
+                                       (or (plist-get order :ref) "--"))))
+                 (emacs (concat invocation-directory invocation-name))
+                 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                 ((require 'elpaca))
+                 ((elpaca-generate-autoloads "elpaca" repo)))
+            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+          (error "%s" (with-current-buffer buffer (buffer-string))))
       ((error) (warn "%s" err) (delete-directory repo 'recursive))))
   (unless (require 'elpaca-autoloads nil t)
     (require 'elpaca)
@@ -242,11 +244,6 @@
 ;; ;;;-------------------------------------------------------------------
 ;; ;;; modern times
 ;; ;;;-------------------------------------------------------------------
-
-;; cleanup before loading a new theme
-(defadvice load-theme (before clear-previous-themes activate)
-  "Clear existing theme settings instead of layering them"
-  (mapc #'disable-theme custom-enabled-themes))
 
 ;; (use-package dracula-theme  :ensure t)
 ;; (use-package tango-theme  :ensure t)
@@ -526,7 +523,7 @@
   )
   :commands lsp-deferred)
 
-;; (setq lsp-enable-file-watchers nil)
+(setq lsp-enable-file-watchers nil)
 (with-eval-after-load 'lsp-mode
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]measurements\\'")
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.venv\\'")
@@ -574,22 +571,22 @@
 ;;; ----------------------------------------------------------------------
 ;;; git
 ;;; ----------------------------------------------------------------------
-(use-package magit :ensure t)
-(use-package git-timemachine :ensure t)
-(use-package blamer
-  :ensure t
-  :bind (("s-i" . blamer-show-commit-info)
-	 ("s-n" . blamer-mode))
-  :defer 20
-  :custom
-  (blamer-idle-time 0.3)
-  (blamer-min-offset 10)
-  :custom-face
-  (blamer-face ((t :foreground "#9099AB"
-		   :background unspecified
-		   :height .9
-		   :italic t))))
-
+;;(use-package magit :ensure t)
+;;(use-package git-commit :ensure t)
+;;(use-package git-timemachine :ensure t)
+;;(use-package blamer
+;;  :ensure t
+;;  :bind (("s-i" . blamer-show-commit-info)
+;;	 ("s-n" . blamer-mode))
+;;  :defer 20
+;;  :custom
+;;  (blamer-idle-time 0.3)
+;;  (blamer-min-offset 10)
+;;  :custom-face
+;;  (blamer-face ((t :foreground "#9099AB"
+;;		   :background unspecified
+;;		   :height .9
+;;		   :italic t))))
 
 ;;; ----------------------------------------------------------------------
 ;;; save history
@@ -629,50 +626,62 @@
 ;;; ----------------------------------------------------------------------
 ;;; LLM
 ;;; ----------------------------------------------------------------------
-(use-package llm)
-(use-package ellama
-  :init
-  ;; setup key bindings
-  (setopt ellama-keymap-prefix "C-c e")
-  ;; language you want ellama to translate to
-  (setopt ellama-language "English")
-  ;; could be llm-openai for example
-  (require 'llm-ollama)
-  (setopt ellama-provider
-	  (make-llm-ollama
-	   ;; this model should be pulled to use it
-	   ;; value should be the same as you print in terminal during pull
-	   :chat-model "llama3:8b-instruct-q8_0"
-	   :embedding-model "nomic-embed-text"
-	   :default-chat-non-standard-params '(("num_ctx" . 8192))))
-  ;; Predefined llm providers for interactive switching.
-  ;; You shouldn't add ollama providers here - it can be selected interactively
-  ;; without it. It is just example.
-  (setopt ellama-providers
-	  '(("zephyr" . (make-llm-ollama
-			 :chat-model "zephyr:7b-beta-q6_K"
-			 :embedding-model "zephyr:7b-beta-q6_K"))
-	    ("mistral" . (make-llm-ollama
-			  :chat-model "mistral:7b-instruct-v0.2-q6_K"
-			  :embedding-model "mistral:7b-instruct-v0.2-q6_K"))
-	    ("mixtral" . (make-llm-ollama
-			  :chat-model "mixtral:8x7b-instruct-v0.1-q3_K_M-4k"
-			  :embedding-model "mixtral:8x7b-instruct-v0.1-q3_K_M-4k"))))
-  ;; Naming new sessions with llm
-  (setopt ellama-naming-provider
-	  (make-llm-ollama
-	   :chat-model "llama3:8b-instruct-q8_0"
-	   :embedding-model "nomic-embed-text"
-	   :default-chat-non-standard-params '(("stop" . ("\n")))))
-  (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
-  ;; Translation llm provider
-  (setopt ellama-translation-provider (make-llm-ollama
-				       :chat-model "phi3:14b-medium-128k-instruct-q6_K"
-				       :embedding-model "nomic-embed-text")))
-(use-package elisa
-  :ensure (elisa
-           :type git :host github
-           :repo "s-kostyaev/elisa"))
+;; why?
+;; (add-to-list 'load-path "~/.emacs.d/elpaca/builds/llm")
+
+;; (use-package llm
+;;   :init
+;;   (make-llm-ollama
+;;    :host "192.168.1.36"
+;;    :port "11434"
+;;    :embedding-model "mistral:latest"
+;;    :chat-model "mistral:latest"
+;;    :default-chat-temperature 0.1))
+
+;; (use-package ellama
+;;   :init
+;;   ;; setup key bindings
+;;   (setopt ellama-keymap-prefix "C-c e")
+;;   ;; language you want ellama to translate to
+;;   (setopt ellama-language "English")
+;;   ;; could be llm-openai for example
+;;   (require 'llm-ollama)
+;;   (setopt ellama-provider
+;; 	  (make-llm-ollama
+;; 	   ;; this model should be pulled to use it
+;; 	   ;; value should be the same as you print in terminal during pull
+;; 	   :chat-model "llama3:8b-instruct-q8_0"
+;; 	   :embedding-model "nomic-embed-text"
+;; 	   :default-chat-non-standard-params '(("num_ctx" . 8192))))
+;;   ;; Predefined llm providers for interactive switching.
+;;   ;; You shouldn't add ollama providers here - it can be selected interactively
+;;   ;; without it. It is just example.
+;;   (setopt ellama-providers
+;; 	  '(("zephyr" . (make-llm-ollama
+;; 			 :chat-model "zephyr:7b-beta-q6_K"
+;; 			 :embedding-model "zephyr:7b-beta-q6_K"))
+;; 	    ("mistral" . (make-llm-ollama
+;; 			  :chat-model "mistral:7b-instruct-v0.2-q6_K"
+;; 			  :embedding-model "mistral:7b-instruct-v0.2-q6_K"))
+;; 	    ("mixtral" . (make-llm-ollama
+;; 			  :chat-model "mixtral:8x7b-instruct-v0.1-q3_K_M-4k"
+;; 			  :embedding-model "mixtral:8x7b-instruct-v0.1-q3_K_M-4k"))))
+;;   ;; Naming new sessions with llm
+;;   (setopt ellama-naming-provider
+;; 	  (make-llm-ollama
+;; 	   :chat-model "llama3:8b-instruct-q8_0"
+;; 	   :embedding-model "nomic-embed-text"
+;; 	   :default-chat-non-standard-params '(("stop" . ("\n")))))
+;;   (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
+;;   ;; Translation llm provider
+;;   (setopt ellama-translation-provider (make-llm-ollama
+;; 				       :chat-model "phi3:14b-medium-128k-instruct-q6_K"
+;; 				       :embedding-model "nomic-embed-text")))
+
+;;(use-package elisa
+;;  :ensure (elisa
+;;           :type git :host github
+;;           :repo "s-kostyaev/elisa"))
 
 ;;; ----------------------------------------------------------------------
 ;;; projectile: not doing a lot for me
@@ -700,28 +709,28 @@
 ;;; ----------------------------------------------------------------------
 ;;; completion section: someday I like it but that's too different from the standard emacs
 ;;; ----------------------------------------------------------------------
-(use-package vertico
-  :ensure t
-  :init
-  (vertico-mode 1)
-  (require 'vertico-directory)
-  (setq vertico-scoll-margin 0)
-  (setq vertico-vertical-count 14)
-  (setq vertico-cycle t))
+;; (use-package vertico
+;;   :ensure t
+;;   :init
+;;   (vertico-mode 1)
+;;   (require 'vertico-directory)
+;;   (setq vertico-scoll-margin 0)
+;;   (setq vertico-vertical-count 14)
+;;   (setq vertico-cycle t))
 
-(use-package consult
-  :ensure t
-  :bind
-  ("S-C-s" . consult-line)
-  :init
-  (autoload 'projectile-project-root "~/src")
-  )
+;; (use-package consult
+;;   :ensure t
+;;   :bind
+;;   ("S-C-s" . consult-line)
+;;   :init
+;;   (autoload 'projectile-project-root "~/src")
+;;   )
 
-(use-package orderless
-  :ensure t
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles basic partial-completion)))))
+;; (use-package orderless
+;;   :ensure t
+;;   :custom
+;;   (completion-styles '(orderless basic))
+;;   (completion-category-overrides '((file (styles basic partial-completion)))))
 
 ;;; ----------------------------------------------------------------------
 ;;; dashboard: nice to have but could be removed
