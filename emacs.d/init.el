@@ -326,12 +326,6 @@
 ;; (use-package cc-mode :ensure t)
 ;; (use-package java-mode :ensure t)
 
-;; replaced by web-mode
-;; (use-package css-mode :ensure t)
-;; (use-package sgml-mode :ensure t)
-;; (use-package xml-mode :ensure t)
-;; (use-package scss-mode :ensure t)
-
 (use-package handlebars-mode :ensure t)
 
 (use-package caml :ensure t)
@@ -448,7 +442,8 @@
 	web-mode-enable-current-element-highlight t
 	web-mode-enable-current-column-highlight t
 	web-mode-content-types-alist  '(("django" . "\\.tpl\\'")))
-  :hook (web-mode . auto-rename-tag-mode))
+  ;; :hook (web-mode . auto-rename-tag-mode)
+  )
 
 ;;; ----------------------------------------------------------------------
 ;;; javascrip: js2
