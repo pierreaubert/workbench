@@ -10,7 +10,7 @@
     "assistant": {
 	"default_model": {
 	    "provider": "ollama",
-	    "model": "granite-code:8b"
+	    "model": "deepseek-coder-v2:latest"
 	},
 	"version": "2"
     },

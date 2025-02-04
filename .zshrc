@@ -110,3 +110,6 @@ COMPLETION_WAITING_DOTS="true"
 # go (1.2)
 export GOPATH=$HOME/.gocode
 
+
+# Added by Windsurf
+export PATH="/Users/pierrre/.codeium/windsurf/bin:$PATH"

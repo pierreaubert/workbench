@@ -237,15 +237,15 @@
 (global-set-key (kbd "C-c C-c") 'comment-region)
 (global-set-key (kbd "C-c C-d") 'uncomment-region)
 
-(global-set-key (kbd "<f7>") (lambda() (interactive)(load-theme "tango-light")))
-(global-set-key (kbd "<f8>") (lambda() (interactive)(load-theme "tango-dark")))
-(global-set-key (kbd "<f12>") (lambda() (interactive)(next-error)))
+(global-set-key (kbd "<f7>") (lambda() (interactive) (load-theme "tsdh-light")))
+(global-set-key (kbd "<f8>") (lambda() (interactive) (load-theme "tsdh-dark")))
+(global-set-key (kbd "<f12>") (lambda() (interactive) (next-error)))
 
 ;; ;;;-------------------------------------------------------------------
 ;; ;;; modern times
 ;; ;;;-------------------------------------------------------------------
 
-;; (use-package dracula-theme  :ensure t)
+(use-package dracula-theme  :ensure t)
 ;; (use-package tango-theme  :ensure t)
 
 ;;; ----------------------------------------------------------------------
@@ -291,7 +291,7 @@
 ;;   :demand t
 ;;   :bind ("C-c i" . string-inflection-cycle))
 
-(global-hl-line-mode t)
+;; (global-hl-line-mode t)
 
 ;; ;; always add line numbers
 (add-hook 'prog-mode-hook #'display-line-numbers-mode)
@@ -328,11 +328,11 @@
 
 (use-package handlebars-mode :ensure t)
 
-(use-package caml :ensure t)
-(use-package erlang :ensure t)
-(use-package php-mode :ensure t)
+;; (use-package caml :ensure t)
+;; (use-package erlang :ensure t)
+;; (use-package php-mode :ensure t)
 (use-package rust-mode :ensure t)
-(use-package csv-mode :ensure t)
+;; (use-package csv-mode :ensure t)
 (use-package nginx-mode :ensure t)
 
 ;;;-------------------------------------------------------------------
@@ -453,7 +453,7 @@
 ;;;-------------------------------------------------------------------
 ;;; SQL
 ;;;-------------------------------------------------------------------
-(use-package sql-indent :ensure t)
+;; (use-package sql-indent :ensure t)
 (use-package sqlformat
   :ensure t
   :config
@@ -566,22 +566,23 @@
 ;;; ----------------------------------------------------------------------
 ;;; git
 ;;; ----------------------------------------------------------------------
-;;(use-package magit :ensure t)
-;;(use-package git-commit :ensure t)
-;;(use-package git-timemachine :ensure t)
-;;(use-package blamer
-;;  :ensure t
-;;  :bind (("s-i" . blamer-show-commit-info)
-;;	 ("s-n" . blamer-mode))
-;;  :defer 20
-;;  :custom
-;;  (blamer-idle-time 0.3)
-;;  (blamer-min-offset 10)
-;;  :custom-face
-;;  (blamer-face ((t :foreground "#9099AB"
-;;		   :background unspecified
-;;		   :height .9
-;;		   :italic t))))
+(use-package transient :ensure t)
+(use-package magit :ensure t)
+;; (use-package git-commit :ensure t)
+(use-package git-timemachine :ensure t)
+(use-package blamer
+ :ensure t
+ :bind (("s-i" . blamer-show-commit-info)
+	 ("s-n" . blamer-mode))
+ :defer 20
+ :custom
+ (blamer-idle-time 0.3)
+ (blamer-min-offset 10)
+ :custom-face
+ (blamer-face ((t :foreground "#9099AB"
+		   :background unspecified
+		   :height .9
+		   :italic t))))
 
 ;;; ----------------------------------------------------------------------
 ;;; save history
@@ -785,7 +786,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("dcb1cc804b9adca583e4e65755895ba0a66ef82d29464cf89a78b88ddac6ca53" "603a831e0f2e466480cdc633ba37a0b1ae3c3e9a4e90183833bc4def3421a961" default)))
+   '("a3f15a01c7f7fd981c20887b3727c91acf2f636636a7642765c846ad15aa9bbe"
+     "dcb1cc804b9adca583e4e65755895ba0a66ef82d29464cf89a78b88ddac6ca53"
+     "603a831e0f2e466480cdc633ba37a0b1ae3c3e9a4e90183833bc4def3421a961"
+     default))
+ '(package-selected-packages nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
