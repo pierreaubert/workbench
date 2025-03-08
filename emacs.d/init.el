@@ -1,5 +1,6 @@
 ;;; paub-init --- initialisation for .emacs -*- emacs-lisp -*-
 ;;; Commentary:
+;;;  12 Jan 25 :  added codeium (windsurf AI)
 ;;;  12 Sep 24 :  enable ollama with full config
 ;;;  08 Jul 24 :  remove a lot of goodies
 ;;;  17 Jun 24 :  fix completion
@@ -225,7 +226,6 @@
 (setq scroll-step 1)
 (menu-bar-mode 0)
 (tool-bar-mode 0)
-(column-number-mode)
 (setq ring-bell-function 'ignore)
 (setq native-comp-async-report-warnings-errors nil)
 
@@ -291,9 +291,10 @@
 ;;   :demand t
 ;;   :bind ("C-c i" . string-inflection-cycle))
 
-(global-hl-line-mode t)
+;; sometimes great sometimes not
+;; (global-hl-line-mode t)
 
-;; ;; always add line numbers
+;; always add line numbers
 (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 (add-hook 'conf-mode-hook #'display-line-numbers-mode)
 
@@ -328,12 +329,14 @@
 
 (use-package handlebars-mode :ensure t)
 
-(use-package caml :ensure t)
-(use-package erlang :ensure t)
-(use-package php-mode :ensure t)
+;; (use-package caml :ensure t)
+;; (use-package erlang :ensure t)
+;; (use-package php-mode :ensure t)
 (use-package rust-mode :ensure t)
 (use-package csv-mode :ensure t)
 (use-package nginx-mode :ensure t)
+
+
 
 ;;;-------------------------------------------------------------------
 ;;; Auto-Mode-Alist
@@ -416,12 +419,13 @@
 		("\\.rb$"       .       ruby-mode)
 		("\\.txt$"      .       text-mode)
 		("\\.py$"       .       python-mode)
-		("\\.hrl$"      .       erlang-mode)
-		("\\.erl$"      .       erlang-mode)
+		;; ("\\.hrl$"      .       erlang-mode)
+		;; ("\\.erl$"      .       erlang-mode)
 		("\\.rs$"       .       rust-mode)
 		("\\.yml$"      .       yml-mode)
                 )
               )
+
 
 ;;;-------------------------------------------------------------------
 ;;; Web-Mode
@@ -526,10 +530,8 @@
 )
 
 ;; optionally if you want to use debugger
-;;(use-package dap-mode
-;;  :ensure t
-;;  :demand t)
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+;;(use-package dap-mode :ensure t :demand t)
+;;(use-package dap-go)
 
 (use-package lsp-pyright
   :ensure t
@@ -540,24 +542,141 @@
                          (lsp))))  ; or lsp-deferred
 
 
-;; lsp UI
+;; ;; lsp UI
 (use-package lsp-ui
   :ensure t
   :demand t
   :commands lsp-ui-mode)
 
+;;;-------------------------------------------------------------------
+;;; Web-Mode
+;;;-------------------------------------------------------------------
+(use-package go-ts-mode
+  :ensure t
+  :elpaca nil
+  :mode "\\.go\\'"
+  :preface
+  (defun pa/go-lsp-start()
+    (add-hook 'before-save-hook #'lsp-format-buffer t t)
+    (add-hook 'before-save-hook #'lsp-organize-imports t t)
+    (lsp-deferred)
+    )
+  :bind
+  (:map go-ts-mode-map
+    ("C-c g b" . go-dap-setup)
+    ("C-c g h" . go-root-setup)
+    ("C-c g t" . dap-breakpoint-toggle)
+    ("C-c g a" . treesit-beginning-of-defun)
+    ("C-c g e" . treesit-end-of-defun)
+    ("C-c g i" . prog-indent-sexp)
+    ("RET"     . newline-and-indent)
+    ("M-RET"   . newline)
+   )
+  :custom
+  (go-ts-mode-indent-offset 4)
+  :config
+  (add-to-list 'exec-path "~/go/bin")
+  (add-to-list 'exec-path "~/src/workbench/lsp/node_modules/.bin")
+  (setq lsp-go-analyses
+	'((nilness . t)
+          (shadow . t)
+          (unusedwrite . t)
+          (fieldalignment . t)
+          (escape . t))
+        lsp-go-codelenses
+	'((test . t)
+          (tidy . t)
+          (upgrade_dependency . t)
+          (vendor . t)
+          (gc_details . t)
+          (run_govulncheck . t))
+	lsp-register-custom-settings
+	'(("gopls.completeUnimported" t t)
+	  ("gopls.staticcheck" t t))
+        )
+  :hook
+  (go-ts-mode . pa/go-lsp-start)
+)
+(use-package godoctor :ensure t)
+
+;;; ---------------------------------------------------------------------
+;;; codeium
+;;; ----------------------------------------------------------------------
+(add-to-list 'load-path "~/src/workbench/emacs.d/share/codeium.el/")
+(use-package codeium
+    ;; if you use straight
+    ;; :straight '(:type git :host github :repo "Exafunction/codeium.el")
+    ;; otherwise, make sure that the codeium.el file is on load-path
+
+    :init
+    ;; use globally
+    (add-to-list 'completion-at-point-functions #'codeium-completion-at-point)
+
+    ;; if you want multiple completion backends, use cape (https://github.com/minad/cape):
+    ;; (add-hook 'python-mode-hook
+    ;;     (lambda ()
+    ;;         (setq-local completion-at-point-functions
+    ;;             (list (cape-capf-super #'codeium-completion-at-point #'lsp-completion-at-point)))))
+    ;; an async company-backend is coming soon!
+
+    ;; codeium-completion-at-point is autoloaded, but you can
+    ;; optionally set a timer, which might speed up things as the
+    ;; codeium local language server takes ~0.2s to start up
+    ;; (add-hook 'emacs-startup-hook
+    ;;  (lambda () (run-with-timer 0.1 nil #'codeium-init)))
+
+    ;; :defer t ;; lazy loading, if you want
+    :config
+    (setq use-dialog-box nil) ;; do not use popup boxes
+
+    ;; if you don't want to use customize to save the api-key
+    (setq codeium/metadata/api_key "717628d7-ef28-45d5-a866-eeabe1f5e3ca")
+
+    ;; get codeium status in the modeline
+    (setq codeium-mode-line-enable
+        (lambda (api) (not (memq api '(CancelRequest Heartbeat AcceptCompletion)))))
+    ;; (add-to-list 'mode-line-format '(:eval (car-safe codeium-mode-line)) t)
+    ;; alternatively for a more extensive mode-line
+    (add-to-list 'mode-line-format '(-50 "" codeium-mode-line) t)
+
+    ;; use M-x codeium-diagnose to see apis/fields that would be sent to the local language server
+    (setq codeium-api-enabled
+        (lambda (api)
+            (memq api '(GetCompletions Heartbeat CancelRequest GetAuthToken RegisterUser auth-redirect AcceptCompletion))))
+    ;; you can also set a config for a single buffer like this:
+    ;; (add-hook 'python-mode-hook
+    ;;     (lambda ()
+    ;;         (setq-local codeium/editor_options/tab_size 4)))
+
+    ;; You can overwrite all the codeium configs!
+    ;; for example, we recommend limiting the string sent to codeium for better performance
+    (defun my-codeium/document/text ()
+        (buffer-substring-no-properties (max (- (point) 3000) (point-min)) (min (+ (point) 1000) (point-max))))
+    ;; if you change the text, you should also change the cursor_offset
+    ;; warning: this is measured by UTF-8 encoded bytes
+    (defun my-codeium/document/cursor_offset ()
+        (codeium-utf8-byte-length
+            (buffer-substring-no-properties (max (- (point) 3000) (point-min)) (point))))
+    ;; (setq codeium/document/text 'my-codeium/document/text)
+    ;; (setq codeium/document/cursor_offset 'my-codeium/document/cursor_offset)
+    )
+
 ;;; ---------------------------------------------------------------------
 ;;; company
 ;;; ----------------------------------------------------------------------
 (use-package company
-      :ensure t
-      :hook (prog-mode . company-mode)
-      :config
-      (setq company-minimum-prefix-length 2)
-      ;; (global-company-mode)
-      (global-set-key (kbd "C-TAB") #'company-indent-or-complete-common))
+  :ensure t
+  :hook (prog-mode . company-mode)
+  :config
+  (setq company-minimum-prefix-length 0)
+  (setq company-tooltip-align-annotations t)
+  (global-company-mode t)
+  (global-set-key (kbd "C-TAB") #'company-indent-or-complete-common)
+  (setq company-backends '((company-capf company-dabbrev-code)))
+  ;; (setq company-frontends '(company-preview-frontend))
+  (setq company-frontends '(company-pseudo-tooltip-frontend company-preview-frontend))
+  )
 
-(setq company-tooltip-align-annotations t)
 
 (use-package company-box
   :ensure t
@@ -566,9 +685,9 @@
 ;;; ----------------------------------------------------------------------
 ;;; git
 ;;; ----------------------------------------------------------------------
-;;(use-package magit :ensure t)
-;;(use-package git-commit :ensure t)
-;;(use-package git-timemachine :ensure t)
+(use-package magit :ensure t)
+(use-package git-commit :ensure t)
+(use-package git-timemachine :ensure t)
 ;;(use-package blamer
 ;;  :ensure t
 ;;  :bind (("s-i" . blamer-show-commit-info)
@@ -730,24 +849,24 @@
 ;;; ----------------------------------------------------------------------
 ;;; dashboard: nice to have but could be removed
 ;;; ----------------------------------------------------------------------
-;; (use-package dashboard
-;;   :ensure t
-;;   :config
-;;   (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
-;;   (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
-;;   (dashboard-setup-startup-hook))
+(use-package dashboard
+  :ensure t
+  :config
+  (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
+  (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
+  (dashboard-setup-startup-hook))
 
-;; ;; Set the title
-;; (setq dashboard-banner-logo-title "Bonjour Pierre")
-;; ;; Set the banner
-;; (setq dashboard-startup-banner "~/src/workbench/emacs.d/polkadot.txt")
-;; (setq dashboard-center-content t)
-;; (setq dashboard-vertically-center-content t)
-;; (setq dashboard-items '((recents   . 10)
-;; 			(projects  . 10)))
-;; (setq dashboard-icon-type 'all-the-icons)
-;; (setq dashboard-set-heading-icons t)
-;; (setq dashboard-set-file-icons t)
+;; Set the title
+(setq dashboard-banner-logo-title "Bonjour Pierre")
+;; Set the banner
+(setq dashboard-startup-banner "~/src/workbench/emacs.d/polkadot.txt")
+(setq dashboard-center-content t)
+(setq dashboard-vertically-center-content t)
+(setq dashboard-items '((recents   . 10)
+			(projects  . 10)))
+(setq dashboard-icon-type 'all-the-icons)
+(setq dashboard-set-heading-icons t)
+(setq dashboard-set-file-icons t)
 
 ;;; ----------------------------------------------------------------------
 ;;; compile: not too bad
@@ -764,17 +883,17 @@
 ;; ----------------------------------------------------------------------
 ;;; elfeed: not that useful, gnus is better
 ;;; ----------------------------------------------------------------------
-;; (use-package elfeed
-;;   :ensure t
-;;   :custom
-;;   (elfeed-db-directory
-;;    (expand-file-name "elfeed" user-emacs-directory))
-;;   (elfeed-show-entry-switch 'display-buffer))
+(use-package elfeed
+  :ensure t
+  :custom
+  (elfeed-db-directory
+   (expand-file-name "elfeed" user-emacs-directory))
+  (elfeed-show-entry-switch 'display-buffer))
 
-;; (setq elfeed-feeds
-;;       '("https://www.audiosciencereview.com/forum/index.php?reviews/index.rss"
-;; 	"https://www.audiosciencereview.com/forum/index.php?forums/speaker-reviews-measurements-and-discussion.54/index.rss"
-;; 	))
+(setq elfeed-feeds
+      '("https://www.audiosciencereview.com/forum/index.php?reviews/index.rss"
+	"https://www.audiosciencereview.com/forum/index.php?forums/speaker-reviews-measurements-and-discussion.54/index.rss"
+	))
 
 ;;; ----------------------------------------------------------------------
 ;;; custom
