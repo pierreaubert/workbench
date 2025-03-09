@@ -1,0 +1,3 @@
+[submodule "emacs.d/emacs.d/share/codeium.el"]
+	path = emacs.d/emacs.d/share/codeium.el
+	url = https://github.com/Exafunction/codeium.el
