@@ -9,8 +9,8 @@
 {
     "assistant": {
 	"default_model": {
-	    "provider": "ollama",
-	    "model": "granite-code:8b"
+	    "provider": "anthropic",
+	    "model": "claude-3-5-sonnet-latest"
 	},
 	"version": "2"
     },

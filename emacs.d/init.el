@@ -549,11 +549,43 @@
   :commands lsp-ui-mode)
 
 ;;;-------------------------------------------------------------------
-;;; Web-Mode
+;;;
+;;;-------------------------------------------------------------------
+(with-eval-after-load 'treesit
+  (add-to-list 'treesit-language-source-alist '(python "https://github.com/tree-sitter/tree-sitter-python/"))
+  (add-to-list 'treesit-language-source-alist '(go "https://github.com/tree-sitter/tree-sitter-go/"))
+  (add-to-list 'treesit-language-source-alist '(gomod "https://github.com/camdencheek/tree-sitter-go-mod"))
+  (add-to-list 'treesit-language-source-alist '(javascript "https://github.com/tree-sitter/tree-sitter-javascript/"))
+  (add-to-list 'treesit-language-source-alist '(rust "https://github.com/tree-sitter/tree-sitter-rust/"))
+  (add-to-list 'treesit-language-source-alist '(c "https://github.com/tree-sitter/tree-sitter-c/"))
+  (add-to-list 'treesit-language-source-alist '(cpp "https://github.com/tree-sitter/tree-sitter-cpp/"))
+  (add-to-list 'treesit-language-source-alist '(bash "https://github.com/tree-sitter/tree-sitter-bash/"))
+  (add-to-list 'treesit-language-source-alist '(css "https://github.com/tree-sitter/tree-sitter-css/"))
+  (add-to-list 'treesit-language-source-alist '(html "https://github.com/tree-sitter/tree-sitter-html/"))
+  (add-to-list 'treesit-language-source-alist '(json "https://github.com/tree-sitter/tree-sitter-json/"))
+  (add-to-list 'treesit-language-source-alist '(toml "https://github.com/tree-sitter/tree-sitter-toml/"))
+  (add-to-list 'treesit-language-source-alist '(swift "https://github.com/tree-sitter/tree-sitter-swift/"))
+  )
+
+(use-package dockerfile-ts-mode
+  :ensure nil
+  :defer t
+  :mode (("\\Dockerfile\\'" . dockerfile-ts-mode)
+         ("\\.dockerignore\\'" . dockerfile-ts-mode)))
+
+(use-package toml-ts-mode   :ensure nil  :mode "\\.toml\\'"  :defer t)
+(use-package yaml-ts-mode   :ensure nil  :mode "\\.ya?ml\\'" :defer t)
+(use-package bash-ts-mode   :ensure nil  :mode "\\.sh\\'"    :defer t)
+(use-package css-ts-mode    :ensure nil  :mode "\\.css\\'"   :defer t)
+(use-package html-ts-mode   :ensure nil  :mode "\\.html\\'"  :defer t)
+(use-package json-ts-mode   :ensure nil  :mode "\\.json\\'"  :defer t)
+(use-package swift-ts-mode  :ensure nil  :mode "\\.swift\\'"  :defer t)
+
+;;;-------------------------------------------------------------------
+;;; golang
 ;;;-------------------------------------------------------------------
 (use-package go-ts-mode
-  :ensure t
-  :elpaca nil
+  :ensure nil
   :mode "\\.go\\'"
   :preface
   (defun pa/go-lsp-start()
@@ -575,8 +607,6 @@
   :custom
   (go-ts-mode-indent-offset 4)
   :config
-  (add-to-list 'exec-path "~/go/bin")
-  (add-to-list 'exec-path "~/src/workbench/lsp/node_modules/.bin")
   (setq lsp-go-analyses
 	'((nilness . t)
           (shadow . t)
@@ -685,9 +715,9 @@
 ;;; ----------------------------------------------------------------------
 ;;; git
 ;;; ----------------------------------------------------------------------
-(use-package magit :ensure t)
-(use-package git-commit :ensure t)
-(use-package git-timemachine :ensure t)
+;;(use-package magit :ensure t)
+;;(use-package git-commit :ensure t)
+;;(use-package git-timemachine :ensure t)
 ;;(use-package blamer
 ;;  :ensure t
 ;;  :bind (("s-i" . blamer-show-commit-info)
