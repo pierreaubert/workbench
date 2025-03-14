@@ -8,7 +8,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+ZSH_THEME="random"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -104,6 +104,7 @@ alias m="make"
 alias et="emacsclient -t"
 alias ec="emacsclient -c"
 alias j="jobs -l"
+alias gohorn="export LC_CTYPE=en_US.UTF-8 && source ~/.ssh/env.sh && mosh pierre@horn"
 
 COMPLETION_WAITING_DOTS="true"
 

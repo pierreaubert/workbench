@@ -1,5 +1,6 @@
 ;;; paub-init --- initialisation for .emacs -*- emacs-lisp -*-
 ;;; Commentary:
+;;;  09 Mar 25 :  added treesit configuration
 ;;;  12 Jan 25 :  added codeium (windsurf AI)
 ;;;  12 Sep 24 :  enable ollama with full config
 ;;;  08 Jul 24 :  remove a lot of goodies
@@ -604,8 +605,8 @@
     ("RET"     . newline-and-indent)
     ("M-RET"   . newline)
    )
-  :custom
-  (go-ts-mode-indent-offset 4)
+  ;; :custom
+  ;; (go-ts-mode-indent-offset 4)
   :config
   (setq lsp-go-analyses
 	'((nilness . t)
@@ -715,22 +716,21 @@
 ;;; ----------------------------------------------------------------------
 ;;; git
 ;;; ----------------------------------------------------------------------
-;;(use-package magit :ensure t)
-;;(use-package git-commit :ensure t)
-;;(use-package git-timemachine :ensure t)
-;;(use-package blamer
-;;  :ensure t
-;;  :bind (("s-i" . blamer-show-commit-info)
-;;	 ("s-n" . blamer-mode))
-;;  :defer 20
-;;  :custom
-;;  (blamer-idle-time 0.3)
-;;  (blamer-min-offset 10)
-;;  :custom-face
-;;  (blamer-face ((t :foreground "#9099AB"
-;;		   :background unspecified
-;;		   :height .9
-;;		   :italic t))))
+(use-package magit :ensure t)
+(use-package git-timemachine :ensure t)
+(use-package blamer
+  :ensure t
+  :bind (("s-i" . blamer-show-commit-info)
+	 ("s-n" . blamer-mode))
+  :defer 20
+  :custom
+  (blamer-idle-time 0.3)
+  (blamer-min-offset 10)
+  :custom-face
+  (blamer-face ((t :foreground "#9099AB"
+		   :background unspecified
+		   :height .9
+		   :italic t))))
 
 ;;; ----------------------------------------------------------------------
 ;;; save history
@@ -934,7 +934,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("dcb1cc804b9adca583e4e65755895ba0a66ef82d29464cf89a78b88ddac6ca53" "603a831e0f2e466480cdc633ba37a0b1ae3c3e9a4e90183833bc4def3421a961" default)))
+   '("dcb1cc804b9adca583e4e65755895ba0a66ef82d29464cf89a78b88ddac6ca53"
+     "603a831e0f2e466480cdc633ba37a0b1ae3c3e9a4e90183833bc4def3421a961"
+     default))
+ '(package-selected-packages '(magit)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
