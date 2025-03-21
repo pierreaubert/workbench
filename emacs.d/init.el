@@ -566,7 +566,7 @@
   (add-to-list 'treesit-language-source-alist '(swift "https://github.com/tree-sitter/tree-sitter-swift/"))
   (add-to-list 'treesit-language-source-alist '(rust "https://github.com/tree-sitter/tree-sitter-rust/"))
   (add-to-list 'treesit-language-source-alist '(toml "https://github.com/tree-sitter/tree-sitter-toml/"))
-  (add-to-list 'treesit-language-source-alist '(yaml "https://github.com/tree-sitter/tree-sitter-yaml/"))
+  (add-to-list 'treesit-language-source-alist '(yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml"))
   )
 
 (use-package dockerfile-ts-mode
