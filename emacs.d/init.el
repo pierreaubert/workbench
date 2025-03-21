@@ -712,6 +712,7 @@
 ;;; ----------------------------------------------------------------------
 ;;; git
 ;;; ----------------------------------------------------------------------
+(use-package transient :ensure t)
 (use-package magit :ensure t)
 (use-package git-timemachine :ensure t)
 (use-package blamer
