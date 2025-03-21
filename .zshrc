@@ -83,9 +83,9 @@ export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='emacs -nox'
+  export EDITOR='jed'
 else
-  export EDITOR='emacs'
+  export EDITOR='jed'
 fi
 
 # Compilation flags
@@ -105,9 +105,12 @@ alias et="emacsclient -t"
 alias ec="emacsclient -c"
 alias j="jobs -l"
 alias gohorn="export LC_CTYPE=en_US.UTF-8 && source ~/.ssh/env.sh && mosh pierre@horn"
+alias gospin="export LC_CTYPE=en_US.UTF-8 && source ~/.ssh/env.sh && mosh pierre@192.168.1.33"
+alias goweb1="export LC_CTYPE=en_US.UTF-8 && source ~/.ssh/env.sh && mosh pierre@192.168.1.18"
+alias goweb2="export LC_CTYPE=en_US.UTF-8 && source ~/.ssh/env.sh && mosh pierre@192.168.1.20"
 
 COMPLETION_WAITING_DOTS="true"
 
 # go (1.2)
-export GOPATH=$HOME/.gocode
+export GOPATH=$HOME/go
 

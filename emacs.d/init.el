@@ -513,59 +513,60 @@
 ;;; ----------------------------------------------------------------------
 ;;; lsp or eglot?
 ;;; ----------------------------------------------------------------------
-(use-package lsp-mode
-  :init
-  (setq lsp-keymap-prefix "C-c l")
-  :ensure t
-  :demand t
-  :hook (
-	 (lsp-mode . lsp-enable-which-key-integration)
-  )
-  :commands lsp-deferred)
+;; (use-package lsp-mode
+;;   :init
+;;   (setq lsp-keymap-prefix "C-c l")
+;;   :ensure t
+;;   :demand t
+;;   :hook (
+;; 	 (lsp-mode . lsp-enable-which-key-integration)
+;;   )
+;;   :commands lsp-deferred)
 
-(setq lsp-enable-file-watchers nil)
-(with-eval-after-load 'lsp-mode
-  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]measurements\\'")
-  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.venv\\'")
-  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.emacs\\.d\\'")
-)
+;; (setq lsp-enable-file-watchers nil)
+;; (with-eval-after-load 'lsp-mode
+;;   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]measurements\\'")
+;;   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.venv\\'")
+;;   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.emacs\\.d\\'")
+;; )
 
-;; optionally if you want to use debugger
-;;(use-package dap-mode :ensure t :demand t)
-;;(use-package dap-go)
+;; ;; optionally if you want to use debugger
+;; ;;(use-package dap-mode :ensure t :demand t)
+;; ;;(use-package dap-go)
 
-(use-package lsp-pyright
-  :ensure t
-  :init
-  (setq lsp-pyright-multi-root nil)
-  :hook (python-mode . (lambda ()
-                         (require 'lsp-pyright)
-                         (lsp))))  ; or lsp-deferred
+;; (use-package lsp-pyright
+;;   :ensure t
+;;   :init
+;;   (setq lsp-pyright-multi-root nil)
+;;   :hook (python-mode . (lambda ()
+;;                          (require 'lsp-pyright)
+;;                          (lsp))))  ; or lsp-deferred
 
 
-;; ;; lsp UI
-(use-package lsp-ui
-  :ensure t
-  :demand t
-  :commands lsp-ui-mode)
+;; ;; ;; lsp UI
+;; (use-package lsp-ui
+;;   :ensure t
+;;   :demand t
+;;   :commands lsp-ui-mode)
 
 ;;;-------------------------------------------------------------------
-;;;
+;;; keep sorted
 ;;;-------------------------------------------------------------------
 (with-eval-after-load 'treesit
-  (add-to-list 'treesit-language-source-alist '(python "https://github.com/tree-sitter/tree-sitter-python/"))
-  (add-to-list 'treesit-language-source-alist '(go "https://github.com/tree-sitter/tree-sitter-go/"))
-  (add-to-list 'treesit-language-source-alist '(gomod "https://github.com/camdencheek/tree-sitter-go-mod"))
-  (add-to-list 'treesit-language-source-alist '(javascript "https://github.com/tree-sitter/tree-sitter-javascript/"))
-  (add-to-list 'treesit-language-source-alist '(rust "https://github.com/tree-sitter/tree-sitter-rust/"))
+  (add-to-list 'treesit-language-source-alist '(bash "https://github.com/tree-sitter/tree-sitter-bash/"))
   (add-to-list 'treesit-language-source-alist '(c "https://github.com/tree-sitter/tree-sitter-c/"))
   (add-to-list 'treesit-language-source-alist '(cpp "https://github.com/tree-sitter/tree-sitter-cpp/"))
-  (add-to-list 'treesit-language-source-alist '(bash "https://github.com/tree-sitter/tree-sitter-bash/"))
   (add-to-list 'treesit-language-source-alist '(css "https://github.com/tree-sitter/tree-sitter-css/"))
+  (add-to-list 'treesit-language-source-alist '(go "https://github.com/tree-sitter/tree-sitter-go/"))
+  (add-to-list 'treesit-language-source-alist '(gomod "https://github.com/camdencheek/tree-sitter-go-mod"))
   (add-to-list 'treesit-language-source-alist '(html "https://github.com/tree-sitter/tree-sitter-html/"))
+  (add-to-list 'treesit-language-source-alist '(javascript "https://github.com/tree-sitter/tree-sitter-javascript/"))
   (add-to-list 'treesit-language-source-alist '(json "https://github.com/tree-sitter/tree-sitter-json/"))
-  (add-to-list 'treesit-language-source-alist '(toml "https://github.com/tree-sitter/tree-sitter-toml/"))
+  (add-to-list 'treesit-language-source-alist '(python "https://github.com/tree-sitter/tree-sitter-python/"))
   (add-to-list 'treesit-language-source-alist '(swift "https://github.com/tree-sitter/tree-sitter-swift/"))
+  (add-to-list 'treesit-language-source-alist '(rust "https://github.com/tree-sitter/tree-sitter-rust/"))
+  (add-to-list 'treesit-language-source-alist '(toml "https://github.com/tree-sitter/tree-sitter-toml/"))
+  (add-to-list 'treesit-language-source-alist '(yaml "https://github.com/tree-sitter/tree-sitter-yaml/"))
   )
 
 (use-package dockerfile-ts-mode
@@ -592,7 +593,7 @@
   (defun pa/go-lsp-start()
     (add-hook 'before-save-hook #'lsp-format-buffer t t)
     (add-hook 'before-save-hook #'lsp-organize-imports t t)
-    (lsp-deferred)
+    ;; (lsp-deferred)
     )
   :bind
   (:map go-ts-mode-map
@@ -633,12 +634,7 @@
 ;;; ---------------------------------------------------------------------
 ;;; codeium
 ;;; ----------------------------------------------------------------------
-(add-to-list 'load-path "~/src/workbench/emacs.d/share/codeium.el/")
 (use-package codeium
-    ;; if you use straight
-    ;; :straight '(:type git :host github :repo "Exafunction/codeium.el")
-    ;; otherwise, make sure that the codeium.el file is on load-path
-
     :init
     ;; use globally
     (add-to-list 'completion-at-point-functions #'codeium-completion-at-point)
