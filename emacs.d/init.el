@@ -1,5 +1,6 @@
 ;;; paub-init --- initialisation for .emacs -*- emacs-lisp -*-
 ;;; Commentary:
+;;;  16 Aug 25 :  added quint mode
 ;;;  09 Mar 25 :  added treesit configuration
 ;;;  12 Jan 25 :  added codeium (windsurf AI)
 ;;;  12 Sep 24 :  enable ollama with full config
@@ -159,7 +160,7 @@
 ;;;-------------------------------------------------------------------
 ;;; package manager
 ;;;-------------------------------------------------------------------
-(defvar elpaca-installer-version 0.7)
+(defvar elpaca-installer-version 0.11)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
@@ -337,7 +338,9 @@
 (use-package csv-mode :ensure t)
 (use-package nginx-mode :ensure t)
 
-
+(load-file "~/src/workbench/emacs.d/share/quint-mode.el")
+;; (load-file "~/src/workbench/emacs.d/share/lsp-quint.el")
+(require 'quint-mode)
 
 ;;;-------------------------------------------------------------------
 ;;; Auto-Mode-Alist
@@ -424,6 +427,7 @@
 		;; ("\\.erl$"      .       erlang-mode)
 		("\\.rs$"       .       rust-mode)
 		("\\.yml$"      .       yml-mode)
+		("\\.qnt$"      .       quint-mode)
                 )
               )
 
@@ -514,14 +518,14 @@
 ;;; lsp or eglot?
 ;;; ----------------------------------------------------------------------
 ;; (use-package lsp-mode
-;;   :init
-;;   (setq lsp-keymap-prefix "C-c l")
-;;   :ensure t
-;;   :demand t
-;;   :hook (
-;; 	 (lsp-mode . lsp-enable-which-key-integration)
-;;   )
-;;   :commands lsp-deferred)
+;;    :init
+;;    (setq lsp-keymap-prefix "C-c l")
+;;    :ensure t
+;;    :demand t
+;;    :hook (
+;;  	 (lsp-mode . lsp-enable-which-key-integration)
+;;    )
+;;    :commands lsp-deferred)
 
 ;; (setq lsp-enable-file-watchers nil)
 ;; (with-eval-after-load 'lsp-mode
@@ -548,6 +552,10 @@
 ;;   :ensure t
 ;;   :demand t
 ;;   :commands lsp-ui-mode)
+
+;; (use-package lsp-quint
+;;   :ensure t
+;;   :hook (quint-mode . lsp))
 
 ;;;-------------------------------------------------------------------
 ;;; keep sorted
