@@ -1,18 +1,17 @@
 {
     "dependencies": {
-        "babel-cli": "^6.26.0",
-        "bash-language-server": "^5.3.3",
-        "eslint": "^8.57.0",
-        "flow": "^0.2.3",
-        "flow-remove-types": "^2.237.1",
+        "bash-language-server": "^5.6.0",
+        "eslint": "^9.33.0",
         "gopls": "^0.0.1-security.5",
-        "html-validator": "^6.0.1",
-        "html-validator-cli": "^7.0.1",
-        "pyright": "^1.1.365",
-        "sass": "^1.77.4",
-        "standard": "^17.1.0",
-        "typescript": "^5.4.5",
-        "typescript-language-server": "^4.3.3",
+        "npm-check-updates": "^18.0.2",
+        "pyright": "^1.1.403",
+        "sass": "^1.90.0",
+        "standard": "^17.1.2",
+        "typescript": "^5.9.2",
+        "typescript-language-server": "^4.4.0",
         "vscode-langservers-extracted": "^4.10.0"
+    },
+    "scripts": {
+        "upgrade": "npx npm-check-updates -u"
     }
 }
