@@ -1,4 +1,4 @@
-;;; paub-init --- initialisation for .emacs -*- emacs-lisp -*-
+;;; paub-init --- initialisation for .emacs -*-  mode: emacs-lisp; lexical-binding: t;  -*-
 ;;; Commentary:
 ;;;  16 Aug 25 :  added quint mode
 ;;;  09 Mar 25 :  added treesit configuration
@@ -418,13 +418,11 @@
 		("\\.js$"       .       js-mode)
 		("\\.json$"     .       json-mode)
 		("\\.tcl$"      .       tcl-mode)
-		("\\.ts$"       .       typescript-mode)
+		("\\.ts$"       .       typescript-ts-mode)
 		("\\.sql$"      .       sql-mode)
 		("\\.rb$"       .       ruby-mode)
 		("\\.txt$"      .       text-mode)
 		("\\.py$"       .       python-mode)
-		;; ("\\.hrl$"      .       erlang-mode)
-		;; ("\\.erl$"      .       erlang-mode)
 		("\\.rs$"       .       rust-mode)
 		("\\.yml$"      .       yml-mode)
 		("\\.qnt$"      .       quint-mode)
