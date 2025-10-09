@@ -1,5 +1,6 @@
 ;;; paub-init --- initialisation for .emacs -*-  mode: emacs-lisp; lexical-binding: t;  -*-
 ;;; Commentary:
+;;;  07 Oct 25 :  added just mode
 ;;;  16 Aug 25 :  added quint mode
 ;;;  09 Mar 25 :  added treesit configuration
 ;;;  12 Jan 25 :  added codeium (windsurf AI)
@@ -425,8 +426,8 @@
 		("\\.py$"       .       python-mode)
 		("\\.rs$"       .       rust-mode)
 		("\\.yml$"      .       yml-mode)
-		("\\.qnt$"      .       quint-mode)
-                )
+		("\\.just$"     .       just-mode)
+		)
               )
 
 
@@ -567,6 +568,8 @@
   (add-to-list 'treesit-language-source-alist '(gomod "https://github.com/camdencheek/tree-sitter-go-mod"))
   (add-to-list 'treesit-language-source-alist '(html "https://github.com/tree-sitter/tree-sitter-html/"))
   (add-to-list 'treesit-language-source-alist '(javascript "https://github.com/tree-sitter/tree-sitter-javascript/"))
+  (add-to-list 'treesit-language-source-alist '(typescript "https://github.com/tree-sitter/tree-sitter-typescript/"))
+  (add-to-list 'treesit-language-source-alist '(tsx "https://github.com/tree-sitter/tree-sitter-typescript/"))
   (add-to-list 'treesit-language-source-alist '(json "https://github.com/tree-sitter/tree-sitter-json/"))
   (add-to-list 'treesit-language-source-alist '(python "https://github.com/tree-sitter/tree-sitter-python/"))
   (add-to-list 'treesit-language-source-alist '(swift "https://github.com/tree-sitter/tree-sitter-swift/"))
@@ -588,6 +591,47 @@
 (use-package html-ts-mode   :ensure nil  :mode "\\.html\\'"  :defer t)
 (use-package json-ts-mode   :ensure nil  :mode "\\.json\\'"  :defer t)
 (use-package swift-ts-mode  :ensure nil  :mode "\\.swift\\'"  :defer t)
+
+;;;-------------------------------------------------------------------
+;;; typescrypt
+;;;-------------------------------------------------------------------
+;; require("tree-sitter-typescript").typescript; // TypeScript grammar
+;; require("tree-sitter-typescript").tsx; // TSX grammar
+;; (make-treesit-auto-recipe
+;;   :lang 'typescript
+;;   :ts-mode 'typescript-ts-mode
+;;   :remap 'typescript-mode
+;;   :requires 'tsx
+;;   :url "https://github.com/tree-sitter/tree-sitter-typescript"
+;;   :revision "master"
+;;   :source-dir "typescript/src"
+;;   :ext "\\.ts\\'")
+
+;; (defvar genehack/tsx-treesit-auto-recipe
+;;   (make-treesit-auto-recipe
+;;    :lang 'tsx
+;;    :ts-mode 'tsx-ts-mode
+;;    :remap '(typescript-tsx-mode)
+;;    :requires 'typescript
+;;    :url "https://github.com/tree-sitter/tree-sitter-typescript"
+;;    :revision "v0.20.3"
+;;    :source-dir "tsx/src"
+;;    :ext "\\.tsx\\'")
+;;   "Recipe for libtree-sitter-tsx.dylib")
+;; (add-to-list 'treesit-auto-recipe-list genehack/tsx-treesit-auto-recipe)
+
+;; (defvar genehack/typescript-treesit-auto-recipe
+;;   (make-treesit-auto-recipe
+;;    :lang 'typescript
+;;    :ts-mode 'typescript-ts-mode
+;;    :remap 'typescript-mode
+;;    :requires 'tsx
+;;    :url "https://github.com/tree-sitter/tree-sitter-typescript"
+;;    :revision "v0.20.3"
+;;    :source-dir "typescript/src"
+;;    :ext "\\.ts\\'")
+;;   "Recipe for libtree-sitter-typescript.dylib")
+;; (add-to-list 'treesit-auto-recipe-list genehack/typescript-treesit-auto-recipe)
 
 ;;;-------------------------------------------------------------------
 ;;; golang
@@ -714,6 +758,12 @@
 (use-package company-box
   :ensure t
   :hook (company-mode . company-box-mode))
+
+;;; ----------------------------------------------------------------------
+;;; just
+;;; ----------------------------------------------------------------------
+(use-package just-mode :ensure t)
+(use-package justl :ensure t)
 
 ;;; ----------------------------------------------------------------------
 ;;; git
