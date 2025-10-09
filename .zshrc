@@ -114,3 +114,14 @@ COMPLETION_WAITING_DOTS="true"
 # go (1.2)
 export GOPATH=$HOME/go
 
+export PATH=$PATH:~/.cargo/bin
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/pierrre/.lmstudio/bin"
+# End of LM Studio CLI section
+
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/pierrre/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
