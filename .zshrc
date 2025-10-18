@@ -112,9 +112,15 @@ alias goweb2="export LC_CTYPE=en_US.UTF-8 && source ~/.ssh/env.sh && mosh pierre
 # go (1.2)
 export GOPATH=$HOME/go
 
-
-
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/Volumes/data/Binaries/.lmstudio/bin"
 # End of LM Studio CLI section
+
+export PATH=$PATH:~/.cargo/bin
+
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/pierrre/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
 
