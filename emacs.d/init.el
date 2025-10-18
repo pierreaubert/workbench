@@ -389,6 +389,7 @@
 		("\\.md$"       .       markdown-mode)
 		("\\.kumac$"    .       kumac-mode)
 		("ChangeLog"    .       change-log-mode)
+		("\\.ad[abs]$"  .       ada-mode)
 		("\\.html$"     .       html-mode)
 		("\\.html.cpp$" .       html-mode)
 		("\\.cpp$"      .       html-mode)
@@ -408,7 +409,6 @@
 		("\\.mpl$"      .       maple-mode)
 		("\\.m$"        .       octave-mode)
 		("\\.tar$"      .       tar-mode)
-		("\\.ad[abs]$"  .       ada-mode)
 		("\\.lsp$"      .       lisp-mode)
 		("\\.pas$"      .       pascal-mode)
 		("\\.m4$"       .       m4-mode)
@@ -420,6 +420,7 @@
 		("\\.json$"     .       json-mode)
 		("\\.tcl$"      .       tcl-mode)
 		("\\.ts$"       .       typescript-ts-mode)
+		("\\.tsx$"       .      typescript-ts-mode)
 		("\\.sql$"      .       sql-mode)
 		("\\.rb$"       .       ruby-mode)
 		("\\.txt$"      .       text-mode)
@@ -427,8 +428,10 @@
 		("\\.rs$"       .       rust-mode)
 		("\\.yml$"      .       yml-mode)
 		("\\.just$"     .       just-mode)
+		("\\.swift$"     .      swift-mode)
 		)
               )
+
 
 
 ;;;-------------------------------------------------------------------
@@ -452,11 +455,6 @@
 	web-mode-content-types-alist  '(("django" . "\\.tpl\\'")))
   ;; :hook (web-mode . auto-rename-tag-mode)
   )
-
-;;; ----------------------------------------------------------------------
-;;; javascrip: js2
-;;; ----------------------------------------------------------------------
-(use-package js2-mode :ensure t)
 
 ;;;-------------------------------------------------------------------
 ;;; SQL
@@ -590,7 +588,9 @@
 (use-package css-ts-mode    :ensure nil  :mode "\\.css\\'"   :defer t)
 (use-package html-ts-mode   :ensure nil  :mode "\\.html\\'"  :defer t)
 (use-package json-ts-mode   :ensure nil  :mode "\\.json\\'"  :defer t)
-(use-package swift-ts-mode  :ensure nil  :mode "\\.swift\\'"  :defer t)
+(use-package js2-mode       :ensure nil  :mode "\\.js\\'"    :defer t)
+(use-package swift-mode     :ensure nil  :mode "\\.swift\\'"    :defer t)
+(use-package typescript-ts-mode  :ensure nil  :mode "\\.ts\\'"  :defer t)
 
 ;;;-------------------------------------------------------------------
 ;;; typescrypt
@@ -990,7 +990,7 @@
    '("dcb1cc804b9adca583e4e65755895ba0a66ef82d29464cf89a78b88ddac6ca53"
      "603a831e0f2e466480cdc633ba37a0b1ae3c3e9a4e90183833bc4def3421a961"
      default))
- '(package-selected-packages '(magit)))
+ '(package-selected-packages '(magit swift-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
