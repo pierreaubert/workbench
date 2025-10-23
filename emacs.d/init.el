@@ -224,7 +224,6 @@
 (setq line-number-mode t)
 (setq column-number-mode t)
 (global-font-lock-mode t)
-(setq-default transient-mark-mode t)
 (show-paren-mode t)                     ; show matching parentheses
 (setq scroll-step 1)
 (menu-bar-mode 0)
@@ -768,22 +767,23 @@
 ;;; ----------------------------------------------------------------------
 ;;; git
 ;;; ----------------------------------------------------------------------
-(use-package transient :ensure t)
-(use-package magit :ensure t)
-(use-package git-timemachine :ensure t)
-(use-package blamer
-  :ensure t
-  :bind (("s-i" . blamer-show-commit-info)
-	 ("s-n" . blamer-mode))
-  :defer 20
-  :custom
-  (blamer-idle-time 0.3)
-  (blamer-min-offset 10)
-  :custom-face
-  (blamer-face ((t :foreground "#9099AB"
-		   :background unspecified
-		   :height .9
-		   :italic t))))
+;; (use-package transient :ensure t)
+;; (setq-default transient-mark-mode t)
+;; (use-package magit :ensure t)
+;; (use-package git-timemachine :ensure t)
+;; (use-package blamer
+;;   :ensure t
+;;   :bind (("s-i" . blamer-show-commit-info)
+;; 	 ("s-n" . blamer-mode))
+;;   :defer 20
+;;   :custom
+;;   (blamer-idle-time 0.3)
+;;   (blamer-min-offset 10)
+;;   :custom-face
+;;   (blamer-face ((t :foreground "#9099AB"
+;; 		   :background unspecified
+;; 		   :height .9
+;; 		   :italic t))))
 
 ;;; ----------------------------------------------------------------------
 ;;; save history
