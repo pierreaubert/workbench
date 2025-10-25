@@ -587,7 +587,7 @@
 (use-package css-ts-mode    :ensure nil  :mode "\\.css\\'"   :defer t)
 (use-package html-ts-mode   :ensure nil  :mode "\\.html\\'"  :defer t)
 (use-package json-ts-mode   :ensure nil  :mode "\\.json\\'"  :defer t)
-(use-package js2-mode       :ensure nil  :mode "\\.js\\'"    :defer t)
+(use-package js-mode        :ensure nil  :mode "\\.js\\'"    :defer t)
 (use-package swift-mode     :ensure nil  :mode "\\.swift\\'"    :defer t)
 (use-package typescript-ts-mode  :ensure nil  :mode "\\.ts\\'"  :defer t)
 
