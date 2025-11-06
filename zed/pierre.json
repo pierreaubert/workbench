@@ -20,6 +20,12 @@
       //"ctrl-escape": "menu::Cancel",
       "ctrl-g": "menu::Cancel",
       "ctrl-x k": "workspace::CloseWindow",
+      "ctrl-x ctrl-b": "tab_switcher::Toggle",
+      "alt-g": "go_to_line::Toggle",
+      "escape g": "go_to_line::Toggle",
+      "f7": "theme_selector::Toggle",
+      "f8": "theme_selector::Toggle",
+      "f12": "editor::GoToDiagnostic",
       // "shift-escape": "workspace::ToggleZoom",
       "ctrl-x o": "workspace::Open",
       "cmd-=": "zed::IncreaseBufferFontSize",
@@ -392,10 +398,20 @@
       ],
       "cmd-u": "editor::UndoSelection",
       "cmd-shift-u": "editor::RedoSelection",
-      "f8": "editor::GoToDiagnostic",
-      "shift-f8": "editor::GoToPreviousDiagnostic",
       "f2": "editor::Rename",
-      "f12": "editor::GoToDefinition",
+      "f12": "editor::GoToDiagnostic",
+      "ctrl-c ctrl-c": [
+        "editor::ToggleComments",
+        {
+          "advance_downwards": false
+        }
+      ],
+      "ctrl-c ctrl-d": [
+        "editor::ToggleComments",
+        {
+          "advance_downwards": false
+        }
+      ],
       "alt-f12": "editor::GoToDefinitionSplit",
       "cmd-f12": "editor::GoToTypeDefinition",
       "shift-f12": "editor::GoToImplementation",
