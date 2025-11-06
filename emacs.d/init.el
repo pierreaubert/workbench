@@ -565,8 +565,14 @@
   (add-to-list 'treesit-language-source-alist '(gomod "https://github.com/camdencheek/tree-sitter-go-mod"))
   (add-to-list 'treesit-language-source-alist '(html "https://github.com/tree-sitter/tree-sitter-html/"))
   (add-to-list 'treesit-language-source-alist '(javascript "https://github.com/tree-sitter/tree-sitter-javascript/"))
-  (add-to-list 'treesit-language-source-alist '(typescript "https://github.com/tree-sitter/tree-sitter-typescript/"))
-  (add-to-list 'treesit-language-source-alist '(tsx "https://github.com/tree-sitter/tree-sitter-typescript/"))
+  (add-to-list 'treesit-language-source-alist '(typescript
+						"https://github.com/tree-sitter/tree-sitter-typescript/"
+						"v0.23.2"
+						"typescript/src"))
+  (add-to-list 'treesit-language-source-alist '(tsx
+						"https://github.com/tree-sitter/tree-sitter-typescript/"
+						"v0.23.2"
+						"tsx/src"))
   (add-to-list 'treesit-language-source-alist '(json "https://github.com/tree-sitter/tree-sitter-json/"))
   (add-to-list 'treesit-language-source-alist '(python "https://github.com/tree-sitter/tree-sitter-python/"))
   (add-to-list 'treesit-language-source-alist '(swift "https://github.com/tree-sitter/tree-sitter-swift/"))
@@ -767,23 +773,23 @@
 ;;; ----------------------------------------------------------------------
 ;;; git
 ;;; ----------------------------------------------------------------------
-;; (use-package transient :ensure t)
-;; (setq-default transient-mark-mode t)
-;; (use-package magit :ensure t)
-;; (use-package git-timemachine :ensure t)
-;; (use-package blamer
-;;   :ensure t
-;;   :bind (("s-i" . blamer-show-commit-info)
-;; 	 ("s-n" . blamer-mode))
-;;   :defer 20
-;;   :custom
-;;   (blamer-idle-time 0.3)
-;;   (blamer-min-offset 10)
-;;   :custom-face
-;;   (blamer-face ((t :foreground "#9099AB"
-;; 		   :background unspecified
-;; 		   :height .9
-;; 		   :italic t))))
+(use-package transient :ensure t)
+(setq-default transient-mark-mode t)
+(use-package magit :ensure t)
+(use-package git-timemachine :ensure t)
+(use-package blamer
+  :ensure t
+  :bind (("s-i" . blamer-show-commit-info)
+	 ("s-n" . blamer-mode))
+  :defer 20
+  :custom
+  (blamer-idle-time 0.3)
+  (blamer-min-offset 10)
+  :custom-face
+  (blamer-face ((t :foreground "#9099AB"
+		   :background unspecified
+		   :height .9
+		   :italic t))))
 
 ;;; ----------------------------------------------------------------------
 ;;; save history
