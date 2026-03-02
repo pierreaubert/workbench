@@ -1,0 +1,3 @@
+[submodule "emacs.d/share/swift-mode"]
+	path = emacs.d/share/swift-mode
+	url = https://github.com/swift-emacs/swift-mode.git

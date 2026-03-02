@@ -7,76 +7,42 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-    "assistant": {
-	"default_model": {
-	    "provider": "anthropic",
-	    "model": "claude-3-5-sonnet-latest"
-	},
-	"version": "2"
-    },
-    "telemetry": {
-	"diagnostics": false,
-	"metrics": false
-    },
-    "vim_mode": false,
-    "theme": "Solarized Light",
-    "base_keymap": "Emacs",
-    "ui_font_size": 16,
-    "buffer_font_size": 16,
-    "language_models": {
-	"ollama": {
-	    "api_url": "http://192.168.1.36:11434"
-	}
-    },
-    "language_overrides": {
-	"Python": {
-	    "language_servers": ["pyright", "ruff"],
-	    "format_on_save": "on",
-	    "formatter": [
-		{
-		    "code_actions": {
-			// Fix all auto-fixable lint violations
-			"source.fixAll.ruff": true,
-			// Organize imports
-			"source.organizeImports.ruff": true
-		    },
-		    "language_server": {
-			"name": "ruff"
-		    }
-		}
-	    ]
-	},
-	"JavaScript": {
-	    "formatter": {
-		"external": {
-		    "command": "prettier",
-		    "arguments": ["--stdin-filepath", "{buffer_path}"]
-		}
-	    }
-	}
-    },
-    "lsp": {
-	"ruff": {
-	    "initialization_options": {
-		"settings": {
-		    // Ruff server settings goes here
-		    "lineLength": 100,
-		    "lint": {
-			"extendSelect": ["I"],
-		    }
-		}
-	    }
-	},
-	"pyright": {
-	    "settings": {
-      		"python.analysis": {
-		    "diagnosticMode": "workspace",
-		    "typeCheckingMode": "strict"
-		},
-		"python": {
-		    "pythonPath": ".venv/bin/python"
-		}
-	    }
-	}
+  "base_keymap": "Emacs",
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
+  "vim_mode": false,
+  "theme": "Ayu Light",
+  "ui_font_size": 16,
+  "buffer_font_size": 16,
+  "language_models": {
+    "ollama": {
+      "api_url": "http://192.168.1.36:11434"
     }
+  },
+  "lsp": {
+    "ruff": {
+      "initialization_options": {
+        "settings": {
+          // Ruff server settings goes here
+          "lineLength": 100,
+          "lint": {
+            "extendSelect": ["I"]
+          }
+        }
+      }
+    },
+    "pyright": {
+      "settings": {
+        "python.analysis": {
+          "diagnosticMode": "workspace",
+          "typeCheckingMode": "strict"
+        },
+        "python": {
+          "pythonPath": ".venv/bin/python"
+        }
+      }
+    }
+  }
 }

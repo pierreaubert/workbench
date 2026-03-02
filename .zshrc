@@ -83,9 +83,9 @@ export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='jed'
+  export EDITOR='emacs -nw'
 else
-  export EDITOR='jed'
+  export EDITOR='emacs -nw'
 fi
 
 # Compilation flags
@@ -131,3 +131,13 @@ compinit
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Added by Antigravity
+export PATH="/Users/pierre/.antigravity/antigravity/bin:$PATH"
+
+# opencode
+export PATH=/Users/pierre/.opencode/bin:$PATH
+
+alias claude-mem='bun "/Users/pierre/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'
+
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
